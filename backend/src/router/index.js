@@ -4,7 +4,6 @@ import Dashboard from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import RequestPassword from "../views/RequestPassword.vue"
 import ResetPassword from "../views/ResetPassword.vue"
-
 import Products from "../views/Products/Products.vue";
 import Users from "../views/Users/Users.vue";
 import Customers from "../views/Customers/Customers.vue";
@@ -18,15 +17,15 @@ import OrdersReport from "../views/Reports/OrdersReport.vue";
 import CustomersReport from "../views/Reports/CustomersReport.vue";
 
 const routes = [
-    {
-        path: '/',
-        redirect: '/app'
-    },
+  {
+    path: '/',
+    redirect: '/app'
+  },
     {
         path: '/app',
         name: 'app',
-        redirect: 'app/dashboard',
         component: AppLayout,
+        redirect: '/app/dashboard',
         meta: {
             requiresAuth: true
         },
@@ -101,16 +100,25 @@ const routes = [
     {
         path: '/requestpassword',
         name: 'requestpassword',
-        component: RequestPassword
+        component: RequestPassword,
+        meta: {
+          requiresGuest: true
+        }
     },
     {
-        path: '/resetpassword',
+        path: '/resetpassword/:token',
         name: 'resetpassword',
-        component: ResetPassword
+        component: ResetPassword,
+        meta: {
+          requiresGuest: true
+        }
+    },
+    {
+      path: '/:pathMatch(.*)',
+      name: 'notFound',
+      component: NotFound
     }
 ];
-
-
 
 const router = createRouter({
     history: createWebHistory(),
@@ -125,7 +133,6 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
-  
-  })
+})
 
 export default router;

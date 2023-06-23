@@ -1,10 +1,9 @@
-
 <template>
     <h1> Dashboard </h1>
-    
 </template>
 
-<script>
+<script setup>
+    import AppLayout from '../components/AppLayout.vue'
 // export default {
 //     name: "Dashboard",
 // }
