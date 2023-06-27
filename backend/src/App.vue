@@ -1,9 +1,5 @@
-<script>
-</script>
 
-<template>
-
-
+<template >
   <router-view> </router-view>
 </template>
 

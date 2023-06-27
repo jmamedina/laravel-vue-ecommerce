@@ -2,7 +2,7 @@
     <h1> Customers Report </h1>
 </template>
 
-<script setup>
+<script setup lang="ts">
     
 </script>
 

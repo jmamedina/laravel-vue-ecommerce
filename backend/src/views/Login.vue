@@ -1,7 +1,7 @@
 <template>
     <guest-layout title="Sign in to your account">
         <div class="mt-3 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form class="space-y-6" action="#" method="POST">
+            <form class="space-y-6" method="POST"  @submit.prevent="login">
                 <div v-if="errorMsg" class="flex items-center justify-between py-3 px-5 bg-red-500 text-white rounded">
                     {{errorMsg}}
                     <span @click ="errorMsg = ''" class="w-8 h-8 flex items-center justify-center rounded-full transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.2)]">
@@ -28,7 +28,7 @@
                         id="email" name="email" 
                         type="email"
                          autocomplete="email" 
-                         required="" 
+                         required="false" 
                          v-model="user.email" 
                          class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                     </div>
@@ -38,7 +38,7 @@
                             name="password" 
                             type="password" 
                             autocomplete="current-password" 
-                            required="" 
+                            required="false" 
                             v-model="user.password"
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
@@ -93,10 +93,9 @@
     </guest-layout>
 </template>
 
-<script setup>
+<script setup lang="ts">
     import {ref} from 'vue'
     import {LockClosedIcon} from '@heroicons/vue/solid'
-    import { LoginIcon} from '@heroicons/vue/solid'
     import GuestLayout from '../components/GuestLayout.vue'
     import store from "../store";
     import router from "../router";
@@ -119,13 +118,7 @@
             })
             .catch(({response}) => {
                 loading.value = false;
-                errorMsg.value = reponse.data.message;
+                errorMsg.value = response.data.message;
             })
     }
-    
 </script>
-
-
-<style scoped>
-
-</style>

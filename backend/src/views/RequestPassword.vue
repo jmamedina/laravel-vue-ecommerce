@@ -4,7 +4,7 @@
       <form class="space-y-6" action="#" method="POST">
         <div>
           <div class="mt-2">
-            <input placeholder="Email Address" id="email" name="email" type="email" autocomplete="email" required="" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            <input placeholder="Email Address" id="email" name="email" type="email" autocomplete="email" required="false" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
           </div>
         </div>
         <div>
@@ -22,7 +22,6 @@
     </guest-layout>
 </template>
 
-<script setup>
-    import { LockClosedIcon} from '@heroicons/vue/solid'
+<script setup lang="ts">
     import GuestLayout from '../components/GuestLayout.vue'
 </script>

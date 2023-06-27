@@ -17,10 +17,7 @@ import OrdersReport from "../views/Reports/OrdersReport.vue";
 import CustomersReport from "../views/Reports/CustomersReport.vue";
 
 const routes = [
-  {
-    path: '/',
-    redirect: '/app'
-  },
+ 
     {
         path: '/app',
         name: 'app',

@@ -10,8 +10,8 @@
     </div>
 </template>
 
-<script setup>
-    import {ref, computed, onMounted, onUnmounted} from 'vue'
+<script setup lang="ts">
+    import {ref, onMounted, onUnmounted} from 'vue'
     import Sidebar from '../components/Sidebar.vue'
     import Navbar from '../components/Navbar.vue'
 
