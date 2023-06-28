@@ -71,6 +71,7 @@ import router from "../router";
 import {computed} from "vue";
 const emit = defineEmits(['toggle-sidebar'])
 const currentUser = computed(() => store.state.user.data);
+
 function logout() {
   store.dispatch('logout')
     .then(() => {

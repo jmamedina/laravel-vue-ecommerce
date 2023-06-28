@@ -57,7 +57,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $user->currentAccessToken()->delete();
         
-        return response('', 204);
+        return response('aaa', 204);
     }
 
     public function getUser(Request $request)
