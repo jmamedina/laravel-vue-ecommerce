@@ -12,3 +12,4 @@ class Product extends \App\Models\Product
         return 'id';
    }
 }
+

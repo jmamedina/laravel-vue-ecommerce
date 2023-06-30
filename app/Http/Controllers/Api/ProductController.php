@@ -45,7 +45,7 @@ class ProductController extends Controller
             $relativePath = $this->saveImage($image);
             $data['image'] = URL::to(Storage::url($relativePath));
             $data['image_mime'] = $image->getClientMimeType();
-            $data['image_size'] = $image->getSize();
+            $data['image_suze'] = $image->getSize();
         }
 
         $product = Product::create($data);

@@ -48,10 +48,10 @@
                     <table-head-cell field="actions"> Actions </table-head-cell>
                 </tr>
             </thead>
-            <tbody v-if="products.loading || !products.data.length">
+            <tbody >
                 <tr>
                     <td colspan="6">
-                        <spinner v-if="products.loading"> </spinner>
+                        <spinner v-if="products"> </spinner>
                         <p v-else class="text-center py-8 text-gray-700">
                             There are no products
                         </p>
@@ -73,7 +73,8 @@ import TableHeadCell from "../../components/core/Table/TableHeadCell.vue";
 import Spinner from "../../components/core/Spinner.vue";
 import store from "../../store";
 
-const products = computed(() => store.state.products);
+const perPage = ref(10)
+const products = computed(() => store.state);
 const sortField = ref('updated_at');
 const sortDirection = ref('desc');
 
@@ -89,6 +90,14 @@ function sortProducts(field){
         sortField.value = field;
         sortDirection.value = 'asc'
     }
+}
+
+onMounted(() => {
+    getProducts();
+})
+
+function getProducts(){
+    store.dispatch('getProducts')
 }
 
 </script>

@@ -8,12 +8,15 @@
             </main>
         </div>
     </div>
+
 </template>
 
 <script setup lang="ts">
     import {ref, onMounted, onUnmounted} from 'vue'
     import Sidebar from '../components/Sidebar.vue'
     import Navbar from '../components/Navbar.vue'
+    import Spinner from "./core/Spinner.vue"
+    import store from "../store";
 
     const sidebarOpened = ref(true);
 
@@ -25,6 +28,7 @@
     }
 
     onMounted(() => {
+        store.dispatch('getCurrentUser')
         updateSidebarState();
         window.addEventListener('resize', updateSidebarState)
     })
