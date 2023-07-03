@@ -120,8 +120,8 @@ import {PRODUCTS_PER_PAGE} from "../../constants.js"
 const perPage = ref(PRODUCTS_PER_PAGE);
 const search = ref("");
 const products = computed(() => store.state.products);
-const sortField = ref('updated_at');
-const sortDirection = ref('desc');
+const sortField = ref('id');
+const sortDirection = ref('asc');
 
 function sortProducts(field){
     if(field === sortField.value)
@@ -135,6 +135,8 @@ function sortProducts(field){
         sortField.value = field;
         sortDirection.value = 'asc'
     }
+
+    getProducts();
 }
 
 onMounted(() => {
@@ -142,10 +144,13 @@ onMounted(() => {
 })
 
 function getProducts(url = ''){
+    console.log(sortField.value);
     store.dispatch('getProducts', {
         url,
         search: search.value,
-        perPage: perPage.value
+        perPage: perPage.value,
+        sortField: sortField.value,
+        sortDirection: sortDirection.value
         })
 }
 
