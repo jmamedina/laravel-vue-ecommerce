@@ -142,8 +142,11 @@ onMounted(() => {
 })
 
 function getProducts(url = ''){
-    console.log(url);
-    store.dispatch('getProducts', {url})
+    store.dispatch('getProducts', {
+        url,
+        search: search.value,
+        perPage: perPage.value
+        })
 }
 
 function getForPage(event, link){
