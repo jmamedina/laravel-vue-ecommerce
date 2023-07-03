@@ -48,7 +48,7 @@
                     <table-head-cell field="actions"> Actions </table-head-cell>
                 </tr>
             </thead>
-            <tbody >
+            <tbody v-if="products.loading || !products.data.length" >
                 <tr>
                     <td colspan="6">
                         <spinner v-if="products"> </spinner>
@@ -58,12 +58,55 @@
                     </td>
                 </tr>
             </tbody>
-            <tbody>
-                <tr>
-                    {{ products }}
+            <tbody v-else>
+                <tr v-for="(product, index) of products.data">
+                    <td class="border-b p-2"> {{ product.id }}</td>
+                    <td class="border-b p-2">
+                        <img class="w-16 h-16 object-cover" :src="product.image_url" :alt="product.title">
+                    </td>
+                    <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
+                        {{ product.title }}
+                    </td>
+                    <td class="border-b p-2">
+                        {{ product.price }}
+                    </td>
+                    <td class="border-b p-2">
+                        {{ product.updated_at }}
+                    </td>
                 </tr>
             </tbody>
         </table>
+        <div class="flex justify-between items-center mt-5">
+            <div v-if="products.data.length">
+                Showing from {{ products.from }} to {{ products.to }}
+            </div>
+    <nav
+        v-if="products.total > products.limit"
+        class="relative z-0 inline-flex justify-center rounded-md shadow-sm -space-x-px"
+        aria-label="Pagination"
+      >
+
+        <a
+          v-for="(link, i) of products.links"
+          :key="i"
+          :disabled="!link.url"
+          href="#"
+          @click="getForPage($event, link)"
+          aria-current="page"
+          class="relative inline-flex items-center px-4 py-2 border text-sm font-medium whitespace-nowrap"
+          :class="[
+              link.active
+                ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
+              i === 0 ? 'rounded-l-md' : '',
+              i === products.links.length - 1 ? 'rounded-r-md' : '',
+              !link.url ? ' bg-gray-100 text-gray-700': ''
+            ]"
+          v-html="link.label"
+        >
+        </a>
+            </nav>
+        </div>
     </div>
 </template>
 
@@ -72,9 +115,11 @@ import {computed, onMounted, ref} from "vue";
 import TableHeadCell from "../../components/core/Table/TableHeadCell.vue";
 import Spinner from "../../components/core/Spinner.vue";
 import store from "../../store";
+import {PRODUCTS_PER_PAGE} from "../../constants.js"
 
-const perPage = ref(10)
-const products = computed(() => store.state);
+const perPage = ref(PRODUCTS_PER_PAGE);
+const search = ref("");
+const products = computed(() => store.state.products);
 const sortField = ref('updated_at');
 const sortDirection = ref('desc');
 
@@ -96,8 +141,18 @@ onMounted(() => {
     getProducts();
 })
 
-function getProducts(){
-    store.dispatch('getProducts')
+function getProducts(url = ''){
+    console.log(url);
+    store.dispatch('getProducts', {url})
+}
+
+function getForPage(event, link){
+    event.preventDefault();
+    if(!link.url || link.active){
+        return
+    }
+
+    getProducts(link.url);
 }
 
 </script>

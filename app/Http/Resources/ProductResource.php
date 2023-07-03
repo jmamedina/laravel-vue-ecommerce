@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Requests;
-use Illuminate\Foundation\Http\FormRequest;
+namespace App\Http\Resources;
 
-class ProductResource extends FormRequest
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ProductResource extends JsonResource
 {
-    /** determine if the user is authorized to make this request  */
-
-    public function authorize()
-    {
-        return true;
-    }
-
-    public function rules()
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,

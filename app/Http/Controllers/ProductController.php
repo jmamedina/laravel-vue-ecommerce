@@ -2,24 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Api\Product;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductListResource;
+use App\Http\Resources\ProductResource;
+
+use App\Models\Product;
 
 class ProductController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $products = Product::query()
-        ->where('published', '=', 1)
-        ->orderBy('updated_at', 'desc')
-        ->paginage(5);
-        return view('product.index', [
-            'products' => $products
-        ]);
+       return ProductListResource::collection(Product::query()->paginate(10));
     }
 
-    public function view(Product $product)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(ProductRequest $request)
     {
-        return view('product.view', ['product' => $product]);
+        return new ProductResource(Product::create($request->validated()));
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Product $product)
+    {
+        return new ProductResource($product);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(ProductRequest $request, Product $product)
+    {
+        $product->update($request->validated());
+        return new ProductResource($product);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        return response()->noContent();
     }
 }
