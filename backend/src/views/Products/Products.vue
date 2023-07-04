@@ -16,14 +16,14 @@ import {ref} from "vue";
     import ProductsTable from "./ProductsTable.vue";
     import ProductsModal from "./ProductsModal.vue"
     import store from "../../store"
-    
+
     const productModel = ref({
      id: '',
      title: '',
      image: '',
      description: '',
      price: '',
-     published: ''
+     // published: ''
     })
 
     const showModal = ref(false);
