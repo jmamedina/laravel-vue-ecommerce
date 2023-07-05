@@ -149,7 +149,7 @@ function onSubmit(){
         .then(response => {
             loading.value = false
             if(response.status === 201){
-                store.dispatch('geteProducts')
+                store.dispatch('getProducts')
                 closeModal()
             }
         })

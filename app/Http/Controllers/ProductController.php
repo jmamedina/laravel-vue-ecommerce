@@ -93,7 +93,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
+        Product::where('id',  '222')->delete();
+
         return response()->noContent();
     }
 
