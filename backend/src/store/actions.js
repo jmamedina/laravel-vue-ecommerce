@@ -26,8 +26,9 @@ export function logout({commit}){
     })
 }
 
-export function getProducts({commit}, {url = '', search ='', perPage = 10, sortField, sortDirection} = {}){
+export function getProducts({commit}, {url = null, search ='', perPage = 10, sortField, sortDirection}){
     commit('setProducts', [true])
+
     url = url || '/products';
     return axiosClient.get(url, {
       params: {
@@ -55,7 +56,7 @@ export function createProduct({commit}, product){
       product = form;
   }
 
-  return axiosClient.post('/products', product)
+  return axiosClient.post(`/products`, product)
 }
 
 export function updateProduct({commit}, product){
@@ -72,11 +73,15 @@ export function updateProduct({commit}, product){
   }else{
     product._method = 'PUT'
   }
-  return axiosClient.post('/products/${id}', product)
+  return axiosClient.post(`/products/${id}`, product)
 }
 
 export function deleteProduct({commit}, id)
 {
   return axiosClient.delete(`/products/${id}`)
+}
+
+export function getProduct({}, id ){
+  return axiosClient.get(`products/${id}`)
 }
 

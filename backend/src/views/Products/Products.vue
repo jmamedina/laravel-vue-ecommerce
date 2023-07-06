@@ -8,7 +8,7 @@
           </button>
      </div>
      <products-modal v-model = "showModal" :product="productModel" ></products-modal>
-     <products-table></products-table>
+     <products-table @clickEdit="editProduct"></products-table>
 </template>
 
 <script setup lang="ts">
@@ -31,6 +31,14 @@ import {ref} from "vue";
     function showProductModal(){
           showModal.value = true;
     }
+
+    function editProduct(p) {
+          store.dispatch('getProduct', p.id)
+          .then(({data}) => {
+               productModel.value = data
+               showProductModal();
+          })
+     }
 
 </script>
 

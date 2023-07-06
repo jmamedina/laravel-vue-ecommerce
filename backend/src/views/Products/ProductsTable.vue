@@ -146,7 +146,6 @@
         class="relative z-0 inline-flex justify-center rounded-md shadow-sm -space-x-px"
         aria-label="Pagination"
       >
-
         <a
           v-for="(link, i) of products.links"
           :key="i"
@@ -180,6 +179,7 @@ import {PRODUCTS_PER_PAGE} from "../../constants.js"
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
 
+const emit = defineEmits(['clickEdit']);
 
 const perPage = ref(PRODUCTS_PER_PAGE);
 const search = ref("");
@@ -199,7 +199,6 @@ function sortProducts(field){
         sortField.value = field;
         sortDirection.value = 'asc'
     }
-
     getProducts();
 }
 
@@ -208,7 +207,6 @@ onMounted(() => {
 })
 
 function getProducts(url = ''){
-    console.log(sortField.value);
     store.dispatch('getProducts', {
         url,
         search: search.value,
@@ -227,7 +225,6 @@ function getForPage(event, link){
 }
 
 function deleteProduct(product){
-
     if(!confirm("Are you sure you want to delete the product?")){
         return
     }
@@ -236,6 +233,10 @@ function deleteProduct(product){
         .then(res => {
                store.dispatch('getProducts')
         })
+}
+
+function editProduct(product){
+    emit('clickEdit', product);
 }
 
 </script>
