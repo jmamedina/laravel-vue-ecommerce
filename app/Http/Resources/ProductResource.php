@@ -2,19 +2,21 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class ProductResource extends JsonResource
 {
-
     public static $wrap = false;
+
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
         return [
             'id' => $request->id,
@@ -25,7 +27,7 @@ class ProductResource extends JsonResource
             'price' => $request->price,
             'published' => (bool)$request->published,
             'created_at' => (new \DateTime($request->created_at))->format('Y-m-d H:i:s'),
-            'updated_at' => (new \DateTime($request->updated_at))->format('Y-m-d H:i:s')
+            'updated_at' => (new \DateTime($request->updated_at))->format('Y-m-d H:i:s'),
         ];
     }
 }

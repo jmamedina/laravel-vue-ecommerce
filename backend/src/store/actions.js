@@ -71,8 +71,15 @@ export function updateProduct({commit}, product){
       form.append('_method', 'PUT');
       product = form;
   }else{
-    product._method = 'PUT'
+    const form = new FormData();
+    form.append('id', product.id);
+    form.append('title', product.title);
+    form.append('description', product.description);
+    form.append('price', product.price);
+    form.append('_method', 'PUT');
+    product = form;
   }
+
   return axiosClient.post(`/products/${product.id}/update`, product)
 }
 

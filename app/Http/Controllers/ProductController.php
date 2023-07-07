@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Api\Product;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductListResource;
 use App\Http\Resources\ProductResource;
@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -95,10 +97,9 @@ class ProductController extends Controller
             $post->title = $request->title;
             $post->description = $request->description;
             $post->price = $request->price;
-            $post->update();
+            return $post->update();
         }
 
-        return new ProductResource($product);
     }
 
     /**
