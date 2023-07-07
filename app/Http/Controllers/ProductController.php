@@ -58,33 +58,46 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($product)
     {
-        return new ProductResource($product);
+        $post = Product::find($product);
+        return $post;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, $product)
     {
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
 
+        $post = Product::find($request->id);
+
         $image = $data['image'] ?? null;
         if($image){
-            $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getCLientMimeType();
-            $data['image_size'] = $image->getSize();
 
-                //if there is an old image
-            if ($product->image){
-                Storage::deleteDirectory('/public/' . dirname($product->image));
+             //if there is an old image
+             if ($post->image){
+                $parts =  Explode('/', $post->image);
+                Storage::deleteDirectory('/images/' .  $parts[5]);
+                Storage::deleteDirectory('/public/' . 'images/' .  $parts[5]);
             }
+
+            $relativePath = $this->saveImage($image);
+            $post->image = URL::to(Storage::url($relativePath));
+            $post->image_mime = $image->getCLientMimeType();
+            $post->image_suze = $image->getSize();
         }
 
-        $product->update($data);
+        if($post)
+        {
+            $post->title = $request->title;
+            $post->description = $request->description;
+            $post->price = $request->price;
+            $post->update();
+        }
+
         return new ProductResource($product);
     }
 

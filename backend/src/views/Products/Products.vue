@@ -32,8 +32,8 @@ import {ref} from "vue";
           showModal.value = true;
     }
 
-    function editProduct(p) {
-          store.dispatch('getProduct', p.id)
+    function editProduct(product) {
+          store.dispatch('getProduct', product)
           .then(({data}) => {
                productModel.value = data
                showProductModal();

@@ -21,8 +21,11 @@ Route::middleware('auth:sanctum', 'admin')->group(function () {
     Route::get('/user', [AuthController::class, 'getUser'])->name('getUser');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
-    Route::apiResource('/products', ProductController::class);
-    Route::delete('/products/{id}/delete', [ProductController::class, 'destroy']);
+    Route::apiResource('/products', ProductController::class); //getproducts
+    Route::delete('/products/{id}/delete', [ProductController::class, 'destroy']); // delete product
+    Route::get('/products/{id}/show', [ProductController::class, 'show']); // show product
+    Route::put('/products/{id}/update', [ProductController::class, 'update']); // show product
+
 
 });
 

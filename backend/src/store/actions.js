@@ -73,15 +73,15 @@ export function updateProduct({commit}, product){
   }else{
     product._method = 'PUT'
   }
-  return axiosClient.post(`/products/${id}`, product)
+  return axiosClient.post(`/products/${product.id}/update`, product)
 }
 
-export function deleteProduct({commit}, id)
+export function deleteProduct({}, id)
 {
   return axiosClient.delete(`/products/${id}/delete`)
 }
 
 export function getProduct({}, id ){
-  return axiosClient.get(`products/${id}`)
+  return axiosClient.get(`products/${id.id}/show`)
 }
 

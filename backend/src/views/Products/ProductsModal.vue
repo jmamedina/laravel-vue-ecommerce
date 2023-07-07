@@ -136,6 +136,7 @@ function closeModal() {
 function onSubmit(){
     loading.value = true
     if(product.value.id){
+      
         store.dispatch('updateProduct', product.value)
         .then(response => {
             loading.value = false;
