@@ -91,13 +91,21 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($product)
     {
-
-        $post = Product::find(1);
-        $post->delete();
-
-        return response()->noContent();
+        $post = Product::find($product);
+        if($product){
+            $post->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'deleted'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => 'yes'
+            ]);
+        }       
     }
 
     private function saveImage(UploadedFile $image)

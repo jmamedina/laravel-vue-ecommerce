@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum', 'admin')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     Route::apiResource('/products', ProductController::class);
+    Route::delete('/products/{id}/delete', [ProductController::class, 'destroy']);
+
 });
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');;
