@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Api\Product;
 use App\Http\Requests\ProductRequest;
@@ -22,8 +22,8 @@ class ProductController extends Controller
     {
         $search = request('search', false);
         $perPage = request('per_page', 10);
-        $sortField = request('sort_field', 'price');
-        $sortDirection = request('sort_direction','desc');
+        $sortField = request('sort_field', 'id');
+        $sortDirection = request('sort_direction','asc');
 
         $query = Product::query();
         $query->orderBy($sortField, $sortDirection);
