@@ -10,11 +10,17 @@
        <!-- Scripts -->
        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+       <style>
+        [x-cloak] {
+            display: none !important
+        }
+        </style>
+        
 </head>
 
-<body x-data="index" class="bg-gray-200">
+<body class="bg-gray-200">
 @include('layouts.navigation')
-    
+
     <!-- product list -->
     <main class="p-5">
         {{ $slot }}
