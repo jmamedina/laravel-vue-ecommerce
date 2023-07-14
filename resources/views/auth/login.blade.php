@@ -43,7 +43,7 @@
                     </div>
                     <a 
                         class="text-purple hover:text-purple-500 text-purple-600" 
-                        href="/src/password-reset.html"
+                        href="{{ route('password.email') }}"
                     >
                         Reset your password 
                     </a>            
