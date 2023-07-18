@@ -7,7 +7,7 @@
                 class="mb-4"> or 
                 <a 
                     class="text-purple-600 hover:text-purple-500" 
-                    href="/src/signup.html"> 
+                    href="{{ route('register') }}"> 
                     Create new one
                 </a>
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
@@ -61,5 +61,4 @@
 
     <!-- Session Status -->
 
-  
 </x-app-layout>
