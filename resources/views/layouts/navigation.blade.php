@@ -50,7 +50,7 @@ class="flex justify-between bg-slate-800 text-white px-4"
                         <ul @click.outside="open = false" x-show="open" x-transition
                             class="bg-slate-800 w-full z-10 right-0 py-2">
                             <li>
-                                <a href="/src/profile.html"
+                                <a href="{{ route('profile') }}"
                                     class="flex items-center py-1 px-4 transition-all hover:bg-slate-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
@@ -144,7 +144,7 @@ class="flex justify-between bg-slate-800 text-white px-4"
                         <ul x-cloak @click.outside="open = false" x-show="open" x-transition
                             class="absolute z-10 bg-slate-800 w-40 right-0 py-2">
                             <li>
-                                <a href="/src/profile.html"
+                                <a href="{{ route('profile') }}"
                                     class="flex items-center py-1 px-4 transition-all hover:bg-slate-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
