@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Cart;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,7 +24,7 @@ Route::middleware(['guestOrVerified'])->group(function(){
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add/{product:slug}', [CartController::class, 'add'])->name('add');
         Route::post('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove');
-        Route::post('/update-quantity/{product:slug}', [CartController::class, 'add'])->name('add');
+        Route::post('/update-quantity/{product:slug}', [CartController::class, 'updateQuantity'])->name('update-quantity');
     });
 });
 
