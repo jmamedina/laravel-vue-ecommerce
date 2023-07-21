@@ -69,10 +69,13 @@
                         Shipping and tax will be applied on checkout
                     </p>
                 </div>
-                <button
-                    class="transition-colors shadow-md items-center text-white bg-purple-500 py-2 px-3 rounded hover:bg-purple-600 active:bg-purple-700 w-full">
-                    Checkout
-                </button>
+                <form action="{{ route('cart.checkout') }}" method="POST">
+                    @csrf
+                    <button
+                        class="transition-colors shadow-md items-center text-white bg-purple-500 py-2 px-3 rounded hover:bg-purple-600 active:bg-purple-700 w-full">
+                        Checkout
+                    </button>
+                </form>
             </div>
         </div>
     </main>

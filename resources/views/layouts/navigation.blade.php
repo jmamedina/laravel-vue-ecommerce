@@ -61,7 +61,7 @@ class="flex justify-between bg-slate-800 text-white px-4"
                                 </a>
                             </li>
                             <li>
-                                <a href="/src/orders.html"
+                                <a href="{{ route('order.index') }}"
                                     class="flex items-center py-1 px-4 transition-all hover:bg-slate-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
@@ -155,7 +155,7 @@ class="flex justify-between bg-slate-800 text-white px-4"
                                 </a>
                             </li>
                             <li>
-                                <a href="/src/orders.html"
+                                <a href="{{ route('order.index') }}"
                                     class="flex items-center py-1 px-4 transition-all hover:bg-slate-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">

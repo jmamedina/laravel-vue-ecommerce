@@ -13,11 +13,8 @@ class CartController extends Controller
 {
     public function index()
     {
-        $cartItems = Cart::getCartItems();
+        list($products, $cartItems) = Cart::getProductsAndCartItems();
 
-        $ids = Arr::pluck($cartItems, 'product_id');
-        $products = Product::query()->whereIn('id', $ids)->get();
-        $cartItems = Arr::keyBy($cartItems, 'product_id');
         $total = 0;
 
         foreach($products as $product){
@@ -118,5 +115,48 @@ class CartController extends Controller
             return response(['count' => Cart::getCountFromitems($cartItems)]);
         }
     }
+
+    // public function checkout(Request $request)
+    // {
+
+    //     list($products, $cartItems) = $this->getProductsAndCartItems();
+        
+    //     $lineItems = [];
+    //     foreach ($products as $product)
+    //     {
+    //         $lineItems[] = [
+    //             'price_data' => [
+    //                 'currency' => 'usd',
+    //                 'product_data' => [
+    //                   'name' => $product->title,
+    //                   'images' => [$product->image],
+    //                 ],
+    //                 'unit_amount_decimal' => $product->price * 100,
+    //               ],
+    //               'quantity' => $cartItems[$product->id]['quantity'],
+    //             ];
+    //     }
+    //     // dd($lineItems);
+
+    //     $stripe = new \Stripe\StripeClient(getenv('STRIPE_SECRET_KEY'));
+    //     $checkout_session = $stripe->checkout->sessions->create([
+    //         'line_items' => $lineItems,
+    //         'mode' => 'payment',
+    //         'success_url' => 'http://localhost:4242/success',
+    //         'cancel_url' => 'http://localhost:4242/cancel',
+    //       ]);
+
+    //       return redirect($checkout_session->url);
+    // }
+
+    // private function getProductsAndCartItems(): array
+    // {
+    //     $cartItems = Cart::getCartItems();
+    //     $ids = Arr::pluck($cartItems, 'product_id');
+    //     $products = Product::query()->whereIn('id', $ids)->get();
+    //     $cartItems = Arr::keyBy($cartItems, 'product_id');
+
+    //     return [$products, $cartItems];
+    // }
 
 }
