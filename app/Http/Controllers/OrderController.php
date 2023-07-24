@@ -26,6 +26,7 @@ class OrderController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = \request()->user();
+        
         if ($order->created_by !== $user->id) {
             return response("You don't have permission to view this order", 403);
         }

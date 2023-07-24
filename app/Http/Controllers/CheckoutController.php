@@ -128,21 +128,6 @@ class CheckoutController extends Controller
         return view('checkout.failure', ['message' => ""]);
     }
 
-    private function updateOrderAndSession(Payment $payment)
-    {
-        $payment->status = PaymentStatus::Paid->value;
-        $payment->update();
-
-        $order = $payment->order;
-        $order->status = OrderStatus::Paid->value;
-        $order->update();
-        // $adminUsers = User::where('is_admin', 1)->get();
-
-        // foreach([...$adminUsers, $order->user] as $user) {
-        //     Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
-        // }
-    }
-
 
     public function checkoutOrder(Order $order, Request $request)
     {
@@ -176,5 +161,60 @@ class CheckoutController extends Controller
 
 
         return redirect($checkout_session->url);
+    }
+
+    public function webhook()
+    {
+        $stripe = new \Stripe\StripeClient(getenv('STRIPE_SECRET_KEY'));
+        $endpoint_secret = 'whsec_3f489a1c3002c5fa44cd57b20f8fdfbcdf6b511f035e6db7bf5e05fe27e29c02';
+
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+        
+        try {
+          $event = \Stripe\Webhook::constructEvent(
+            $payload, $sig_header, $endpoint_secret
+          );
+        } catch(\UnexpectedValueException $e) {
+          // Invalid payload
+          return response('', 401);
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+          // Invalid signature
+          return response('', 402);
+        }
+        
+        // Handle the event
+        switch ($event->type) {
+          case 'checkout.session.completed':
+            $paymentIntent = $event->data->object;
+            $sessionId = $paymentIntent['id'];
+
+            $payment = Payment::query()
+                ->where(['session_id' => $sessionId, 'status' => PaymentStatus::Pending])
+                ->first();
+            if($payment){
+                $this->updateOrderAndSession($payment);
+            }
+          default:
+            echo 'Received unknown event type ' . $event->type;
+        }
+        
+        return response('', 200);
+    }
+
+    private function updateOrderAndSession(Payment $payment)
+    {
+        $payment->status = PaymentStatus::Paid->value;
+        $payment->update();
+
+        $order = $payment->order;
+        $order->status = OrderStatus::Paid->value;
+        $order->update();
+        $adminUsers = User::where('is_admin', 1)->get();
+
+        foreach([...$adminUsers, $order->user] as $user) {
+            Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
+        }
     }
 }

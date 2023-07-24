@@ -51,7 +51,7 @@
                                       Pay 
                                     </button>
                                 </form>
-                                @endif                            
+                                @endif                     
                             </td>
                         </tr>
                         @endforeach
