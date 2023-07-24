@@ -166,7 +166,7 @@ class CheckoutController extends Controller
     public function webhook()
     {
         $stripe = new \Stripe\StripeClient(getenv('STRIPE_SECRET_KEY'));
-        $endpoint_secret = 'whsec_3f489a1c3002c5fa44cd57b20f8fdfbcdf6b511f035e6db7bf5e05fe27e29c02';
+        $endpoint_secret = getenv('ENDPOINT_SECRET_KEY');
 
         $payload = @file_get_contents('php://input');
         $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
