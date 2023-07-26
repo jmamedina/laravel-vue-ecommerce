@@ -62,7 +62,7 @@
                 <tr v-for="(order, index) of orders.data">
                     <td class="border-b p-2"> {{ order.id }}</td>
                     <td class="border-b p-2"> 
-                      <span>  {{ order.staus }} </span>
+                      <span>  {{ order.status }} </span>
                     </td>
                     <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
                         {{ order.created_at }}

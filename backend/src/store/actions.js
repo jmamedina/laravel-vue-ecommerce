@@ -46,6 +46,26 @@ export function getProducts({commit}, {url = null, search ='', perPage = 10, sor
     })
   }
 
+  export function getOrders({commit}, {url = null, search ='', perPage = 10, sortField, sortDirection} = {}){
+    commit('setOrders', [true])
+
+    url = url || '/orders';
+    return axiosClient.get(url, {
+      params: {
+        search, 
+        per_page: perPage,
+        sort_field: sortField,
+        sort_direction: sortDirection
+      }
+    })
+    .then(res => {
+      commit('setOrders', [false, res.data])
+    })
+    .catch(() => {
+      commit('setOrders', [false])
+    })
+  }
+
 export function createProduct({commit}, product){
   if(product.image instanceof File){
       const form = new FormData();

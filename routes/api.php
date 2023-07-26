@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\OrderController;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +27,7 @@ Route::middleware('auth:sanctum', 'admin')->group(function () {
     Route::delete('/products/{id}/delete', [ProductController::class, 'destroy']); // delete product
     Route::get('/products/{id}/show', [ProductController::class, 'show']); // show product
     Route::put('/products/{id}/update', [ProductController::class, 'update']); // show product
-
+    Route::get('/orders',[OrderController::class, 'index']);
 
 });
 
