@@ -112,3 +112,7 @@ export function getProduct({}, id ){
   return axiosClient.get(`products/${id.id}/show`)
 }
 
+export function getOrder({}, id ){
+  return axiosClient.get(`orders/${id}/`)
+}
+

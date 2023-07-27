@@ -213,8 +213,8 @@ class CheckoutController extends Controller
         $order->update();
         $adminUsers = User::where('is_admin', 1)->get();
 
-        foreach([...$adminUsers, $order->user] as $user) {
-            Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
-        }
+        // foreach([...$adminUsers, $order->user] as $user) {
+        //     Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
+        // }
     }
 }

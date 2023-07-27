@@ -28,6 +28,8 @@ Route::middleware('auth:sanctum', 'admin')->group(function () {
     Route::get('/products/{id}/show', [ProductController::class, 'show']); // show product
     Route::put('/products/{id}/update', [ProductController::class, 'update']); // show product
     Route::get('/orders',[OrderController::class, 'index']);
+    Route::get('/orders/{order}',[OrderController::class, 'view']);
+
 
 });
 

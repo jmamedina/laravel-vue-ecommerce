@@ -9,12 +9,9 @@
 import {ref, computed} from "vue";
     import OrdersTable from "./OrdersTable.vue";
     import store from "../../store"
-
     const orders = computed( () => store.state.orders );
-
     function showOrder(product) {
      }
-
 </script>
 
 <style scoped>
