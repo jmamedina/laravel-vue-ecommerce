@@ -116,3 +116,30 @@ export function getOrder({}, id ){
   return axiosClient.get(`orders/${id}/`)
 }
 
+export function getUsers({commit, state}, {url = null, search = '', per_page, sort_field, sort_direction} = {}) {
+  commit('setUsers', [true])
+  url = url || '/users'
+  const params = {
+    per_page: state.users.limit,
+  }
+  return axiosClient.get(url, {
+    params: {
+      ...params,
+      search, per_page, sort_field, sort_direction
+    }
+  })
+    .then((response) => {
+      commit('setUsers', [false, response.data])
+    })
+    .catch(() => {
+      commit('setUsers', [false])
+    })
+}
+
+export function createUser({commit}, user) {
+  return axiosClient.post('/users', user)
+}
+
+export function updateUser({commit}, user) {
+  return axiosClient.put(`/users/${user.id}`, user)
+}
