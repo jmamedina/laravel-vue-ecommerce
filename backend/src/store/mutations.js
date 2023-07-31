@@ -22,9 +22,7 @@ export function setProducts(state, [loading, response = null]){
      page : response.meta.current_page,
      limit : response.meta.per_page,
     }
-
     state.products.loading = loading;
-
   }
 }
 
@@ -67,3 +65,20 @@ export function setOrders(state, [loading, response = null]){
 //   state.toast.show = true;
 //   state.toast.message = message;
 // }
+
+export function setCustomers(state, [loading, data = null]) {
+
+  if (data) {
+    state.customers = {
+      ...state.users,
+      data: data.data,
+      links: data.meta?.links,
+      page: data.meta.current_page,
+      limit: data.meta.per_page,
+      from: data.meta.from,
+      to: data.meta.to,
+      total: data.meta.total,
+    }
+  }
+  state.products.loading = loading;
+}
