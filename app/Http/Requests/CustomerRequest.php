@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\CustomerStatus;
+use Illuminate\Validation\Rules\Enum;
 
 class CustomerRequest extends FormRequest
 {
@@ -26,37 +28,37 @@ class CustomerRequest extends FormRequest
             'last_name' => ['required'],
             'phone' => ['required', 'min:7'],
             'email' => ['required', 'email'],
-            'status' => ['required', 'status'],
-            'shipping.address1' => ['required'],
-            'shipping.address2' => ['required'],
-            'shipping.city' => ['required'],
-            'shipping.state' => ['required'],
-            'shipping.zipcode' => ['required'],
-            'shipping.country_code' => ['required', 'exists:countries,code'],
-            'billing.address1' => ['required'],
-            'billing.address2' => ['required'],
-            'billing.city' => ['required'],
-            'billing.state' => ['required'],
-            'billing.zipcode' => ['required'],
-            'billing.country_code' => ['required', 'exists:countries,code'],
+            'status' => ['required', 'boolean'],
+            'shippingAddress.address1' => ['required'],
+            'shippingAddress.address2' => ['required'],
+            'shippingAddress.city' => ['required'],
+            'shippingAddress.state' => ['required'],
+            'shippingAddress.zipcode' => ['required'],
+            'shippingAddress.country_code' => ['required', 'exists:countries,code'],
+            'billingAddress.address1' => ['required'],
+            'billingAddress.address2' => ['required'],
+            'billingAddress.city' => ['required'],
+            'billingAddress.state' => ['required'],
+            'billingAddress.zipcode' => ['required'],
+            'billingAddress.country_code' => ['required', 'exists:countries,code'],
         ];
     }
 
     public function attributes()
     {
         return [
-            'billing.address1' => 'address 1',
-            'billing.address2' => 'address 2',
-            'billing.city' => 'city',
-            'billing.state' => 'state',
-            'billing.zipcode' => 'zip code',
-            'billing.country_code' => 'country',
-            'shipping.address1' => 'address 1',
-            'shipping.address2' => 'address 2',
-            'shipping.city' => 'city',
-            'shipping.state' => 'state',
-            'shipping.zipcode' => 'zip code',
-            'shipping.country_code' => 'country',
+            'billingAddress.address1' => 'address 1',
+            'billingAddress.address2' => 'address 2',
+            'billingAddress.city' => 'city',
+            'billingAddress.state' => 'state',
+            'billingAddress.zipcode' => 'zip code',
+            'billingAddress.country_code' => 'country',
+            'shippingAddress.address1' => 'address 1',
+            'shippingAddress.address2' => 'address 2',
+            'shippingAddress.city' => 'city',
+            'shippingAddress.state' => 'state',
+            'shippingAddress.zipcode' => 'zip code',
+            'shippingAddress.country_code' => 'country',
         ];
     }
 }

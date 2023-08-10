@@ -20,7 +20,7 @@
                        class="absolute left-0 top-0 bg-white right-0 bottom-0 flex items-center justify-center"/>
               <header class="py-3 px-4 flex justify-between items-center">
                 <DialogTitle as="h3" class="text-lg leading-6 font-medium text-gray-900">
-                  {{ customer.id ? `Update customer: "${props.customer.name}"` : 'Create new Customer' }}
+                  {{ customer.id ? `Update customer: "${props.customer.first_name}"` : 'Create new Customer' }}
                 </DialogTitle>
                 <button
                   @click="closeModal()"
@@ -48,11 +48,34 @@
                   <CustomInput class="mb-2" v-model="customer.last_name" label="Last Name"/>
                   <CustomInput class="mb-2" v-model="customer.email" label="Email"/>
                   <CustomInput class="mb-2" v-model="customer.phone" label="Phone"/>
-                  <CustomInput class="mb-2" v-model="customer.status" label="Status"/>
+                  <CustomInput type="checkbox"  v-model="customer.status" label="Status"/>
+                </div>
+                 <div>
+                  <h2 class="text-xl font-semibold mt-6 pb-2 border-b border-gray-300">Billing address </h2>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <CustomInput v-model="customer.billingAddress.address1" label="Address 1"/>
+                    <CustomInput v-model="customer.billingAddress.address2" label="Address 2"/>
+                    <CustomInput v-model="customer.billingAddress.city" label="City" />
+                    <CustomInput v-model="customer.billingAddress.zipcode" label="Zip Code" />
+                    <CustomInput type='select' :select-options="countries" v-model="customer.billingAddress.country_code" label="Country"/>
+                  </div>
+
+                </div>
+                <div>
+                  <h2 class="text-xl font-semibold mt-6 pb-2 border-b border-gray-300">Shipping address </h2>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <CustomInput v-model="customer.shippingAddress.address1" label="Address 1"/>
+                    <CustomInput v-model="customer.shippingAddress.address2" label="Address 2"/>
+                    <CustomInput v-model="customer.shippingAddress.city" label="City" />
+                    <CustomInput v-model="customer.shippingAddress.zipcode" label="Zip Code" />
+                    <CustomInput type='select' :select-options="countries" v-model="customer.billingAddress.country_code" label="Country"/>
+                  </div>
+
                 </div>
                 <footer class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                   <button type="submit"
-                          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm
+                          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm
                           text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500">
                     Submit
                   </button>
@@ -72,7 +95,7 @@
 </template>
 
 <script setup>
-import {computed, onUpdated, ref} from 'vue'
+import {computed, onUpdated, onMounted, ref} from 'vue'
 import {Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot} from '@headlessui/vue'
 import {ExclamationIcon} from '@heroicons/vue/outline'
 import CustomInput from "../../components/core/CustomInput.vue";
@@ -80,12 +103,10 @@ import store from "../../store/index.js";
 import Spinner from "../../components/core/Spinner.vue";
 
 const customer = ref({
-  id: props.customer.id,
-  name: props.customer.name,
-  email: props.customer.email,
 })
 
 const loading = ref(false)
+const countries = computed(() => store.state.countries.map(c=> ({key: c.code, text:c.name})))
 
 const props = defineProps({
   modelValue: Boolean,
@@ -102,11 +123,20 @@ const show = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
+onMounted(() => {
+  store.dispatch("getCountries");
+})
+
 onUpdated(() => {
   customer.value = {
     id: props.customer.id,
-    name: props.customer.name,
+    first_name: props.customer.first_name,
+    last_name: props.customer.last_name,
+    status: props.customer.status,
+    phone: props.customer.phone,
     email: props.customer.email,
+    shippingAddress: props.customer.shippingAddress,
+    billingAddress: props.customer.billingAddress,
   }
 })
 
@@ -118,6 +148,7 @@ function closeModal() {
 function onSubmit() {
   loading.value = true
   if (customer.value.id) {
+    console.log(customer.value)
     store.dispatch('updateCustomer', customer.value)
       .then(response => {
         loading.value = false;
@@ -139,7 +170,6 @@ function onSubmit() {
       })
       .catch(err => {
         loading.value = false;
-        debugger;
       })
   }
 }

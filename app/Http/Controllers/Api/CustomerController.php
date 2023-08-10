@@ -2,136 +2,112 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Api\Product;
-use App\Http\Requests\ProductRequest;
-use App\Http\Resources\ProductListResource;
-use App\Http\Resources\ProductResource;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
+use App\Enums\AddressType;
+use App\Enums\CustomerStatus;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\CustomerRequest;
+use App\Http\Resources\CountryResource;
+use App\Http\Resources\CustomerListResource;
+use App\Http\Resources\CustomerResource;
+use App\Models\Country;
+use App\Models\Customer;
+use App\Models\CustomerAddress;
+use http\Env\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $search = request('search', false);
         $perPage = request('per_page', 10);
-        $sortField = request('sort_field', 'id');
-        $sortDirection = request('sort_direction','asc');
+        $search = request('search', '');
+        $sortField = request('sort_field', 'updated_at');
+        $sortDirection = request('sort_direction', 'desc');
 
-        $query = Product::query();
-        $query->orderBy($sortField, $sortDirection);
-        if($search){
-            $query->where('title', 'like', "%{$search}%")
-            ->orWhere('description', 'like', "%{$search}%");
+        $query = Customer::query()
+            ->with('user')
+            ->orderBy("customers.$sortField", $sortDirection)
+        ;
+        if ($search) {
+            $query
+                ->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', "%{$search}%")
+                ->join('users', 'customers.user_id', '=', 'users.id')
+                ->orWhere('users.email', 'like', "%{$search}%")
+                ->orWhere('customers.phone', 'like', "%{$search}%")
+            ;
         }
 
-       return ProductListResource::collection($query->paginate($perPage));
-    }
+        $paginator = $query->paginate($perPage);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(ProductRequest $request)
-    {
-        $data = $request->validated();
-        $data['created_by'] = $request->user()->id;
-        $data['updated_by'] = $request->user()->id;
-
-        $image = $data['image'] ?? null;
-        if($image){
-            $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getCLientMimeType();
-            $data['image_suze'] = $image->getSize();
-        }
-
-        $product = Product::create($data);
-
-        return new ProductResource($product);
+        return CustomerListResource::collection($paginator);
     }
 
     /**
      * Display the specified resource.
-     */
-    public function show($product)
+     *
+     * @param \App\Models\Customer $customer
+     * @return \Illuminate\Http\Response
+    */
+    public function show(Customer $customer)
     {
-        $post = Product::find($product);
-        return $post;
+        return new CustomerResource($customer);
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Customer     $customer
+     * @return \Illuminate\Http\Response
      */
-    public function update(ProductRequest $request, $product)
+    public function update(CustomerRequest $request, Customer $customer)
     {
-        $data = $request->validated();
-        $data['updated_by'] = $request->user()->id;
+        $customerData = $request->validated();
+        $customerData['updated_by'] = $request->user()->id;
+        $customerData['status'] = $customerData['status'] ? CustomerStatus::Active->value : CustomerStatus::Disabled->value;
+        $shippingData = $customerData['shippingAddress'];
+        $billingData = $customerData['billingAddress'];
 
-        $post = Product::find($request->id);
+        $customer->update($customerData);
 
-        $image = $data['image'] ?? null;
-        if($image){
-
-             //if there is an old image
-             if ($post->image){
-                $parts =  Explode('/', $post->image);
-                Storage::deleteDirectory('/images/' .  $parts[5]);
-                Storage::deleteDirectory('/public/' . 'images/' .  $parts[5]);
-            }
-
-            $relativePath = $this->saveImage($image);
-            $post->image = URL::to(Storage::url($relativePath));
-            $post->image_mime = $image->getCLientMimeType();
-            $post->image_suze = $image->getSize();
+        if ($customer->shippingAddress) {
+            $customer->shippingAddress->update($shippingData);
+        } else {
+            $shippingData['customer_id'] = $customer->user_id;
+            $shippingData['type'] = AddressType::Shipping->value;
+            CustomerAddress::create($shippingData);
+        }
+        if ($customer->billingAddress) {
+            $customer->billingAddress->update($billingData);
+        } else {
+            $billingData['customer_id'] = $customer->user_id;
+            $billingData['type'] = AddressType::Billing->value;
+            CustomerAddress::create($billingData);
         }
 
-        if($post)
-        {
-            $post->title = $request->title;
-            $post->description = $request->description;
-            $post->price = $request->price;
-            return $post->update();
-        }
-
+        return new CustomerResource($customer);
     }
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param \App\Models\Customer $customer
+     * @return \Illuminate\Http\Response
      */
-    public function destroy($product)
+    public function destroy(Customer $customer)
     {
-        $post = Product::find($product);
-        if($product){
-            $post->delete();
-            return response()->json([
-                'status' => 200,
-                'message' => 'deleted'
-            ]);
-        }else{
-            return response()->json([
-                'status' => 404,
-                'message' => 'yes'
-            ]);
-        }       
+        $customer->delete();
+
+        return response()->noContent();
     }
 
-    private function saveImage(UploadedFile $image)
+    public function countries()
     {
-        $path = 'images/' . Str::random();
-        if(!Storage::exists($path)){
-            Storage::makeDirectory($path, 0755, true);
-        }
-        if (!Storage::putFileAs('public/' . $path, $image, $image->getClientOriginalName())) {
-            throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
-        }
-
-        return $path . '/' . $image->getClientOriginalName();
+        return CountryResource::collection(Country::query()->orderBy('name', 'asc')->get());
     }
 }

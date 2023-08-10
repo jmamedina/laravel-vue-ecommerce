@@ -63,16 +63,22 @@
       </tr>
       </tbody>
       <tbody v-else>
-      <tr v-for="(user, index) of customers.data">
-        <td class="border-b p-2 ">{{ user.id }}</td>
+      <tr v-for="(customer, index) of customers.data">
+        <td class="border-b p-2 ">{{ customer.id }}</td>
         <td class="border-b p-2 ">
-         {{ user.name }}
+         {{ customer.first_name }} {{ customer.last_name }}
         </td>
         <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
-          {{ user.email }}
+          {{ customer.email }}
+        </td>
+        <td class="border-b p-2 ">
+          {{ customer.phone }}
+        </td>
+        <td class="border-b p-2 ">
+          {{ customer.status }}
         </td>
         <td class="border-b p-2">
-          {{ user.created_at }}
+          {{ customer.created_at }}
         </td>
         <td class="border-b p-2 ">
           <Menu as="div" class="relative inline-block text-left">
@@ -104,7 +110,7 @@
                         active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                         'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                       ]"
-                      @click="editUser(user)"
+                      @click="editCustomer(customer)"
                     >
                       <PencilIcon
                         :active="active"
@@ -120,7 +126,7 @@
                         active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                         'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                       ]"
-                      @click="deleteUser(user)"
+                      @click="deleteUser(customer)"
                     >
                       <TrashIcon
                         :active="active"
@@ -177,19 +183,19 @@
 import {computed, onMounted, ref} from "vue";
 import store from "../../store";
 import Spinner from "../../components/core/Spinner.vue";
-import {USERS_PER_PAGE} from "../../constants";
+import {CUSTOMERS_PER_PAGE} from "../../constants";
 import TableHeadCell from "../../components/core/Table/TableHeadCell.vue";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
 // import UserModal from "../Customers/UserModal.vue";
 
-const perPage = ref(USERS_PER_PAGE);
+const perPage = ref(CUSTOMERS_PER_PAGE);
 const search = ref('');
 const customers = computed(() => store.state.customers);
 const sortField = ref('updated_at');
 const sortDirection = ref('desc')
 
-const user = ref({})
+const customer = ref({})
 const showUserModal = ref(false);
 
 const emit = defineEmits(['clickEdit'])
@@ -236,18 +242,18 @@ function showAddNewModal() {
   showUserModal.value = true
 }
 
-function deleteUser(user) {
-  if (!confirm(`Are you sure you want to delete the user?`)) {
+function deleteUser(customer) {
+  if (!confirm(`Are you sure you want to delete the customer?`)) {
     return
   }
-  store.dispatch('deleteUser', user.id)
+  store.dispatch('deleteUser', customer.id)
     .then(res => {
       // TODO Show notification
       store.dispatch('getCustomers')
     })
 }
 
-function editUser(p) {
+function editCustomer(p) {
   emit('clickEdit', p)
 }
 </script>

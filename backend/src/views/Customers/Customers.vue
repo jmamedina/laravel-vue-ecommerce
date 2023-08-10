@@ -13,11 +13,6 @@ import CustomerModal from "./CustomerModal.vue";
 import CustomersTable from "./CustomersTable.vue";
 
 const DEFAULT_USER = {
-  id: '',
-  title: '',
-  description: '',
-  image: '',
-  price: ''
 }
 
 const customers = computed(() => store.state.customers);
@@ -29,9 +24,13 @@ function showAddNewModal() {
   showCustomerModal.value = true
 }
 
-function editCustomer(u) {
-    customerModel.value = u;
-    showAddNewModal();
+function editCustomer(c) {
+  store.dispatch('getCustomer', c)
+    .then(({data}) => {
+      console.log(data)
+      customerModel.value = data;
+      showAddNewModal();
+    })
 }
 
 function onModalClose() {

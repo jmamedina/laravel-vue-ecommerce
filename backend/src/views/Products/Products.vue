@@ -19,8 +19,8 @@ import {ref} from "vue";
 
     const productModel = ref({
      id: '',
-     title: '',
-     image: '',
+     first_name: '',
+     last_name: '',
      description: '',
      price: '',
      // published: ''

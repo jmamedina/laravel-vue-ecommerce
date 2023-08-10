@@ -137,7 +137,6 @@ function onSubmit() {
       })
       .catch(err => {
         loading.value = false;
-        debugger;
       })
   }
 }

@@ -119,7 +119,7 @@ class ProductController extends Controller
                 'status' => 404,
                 'message' => 'yes'
             ]);
-        }       
+        }
     }
 
     private function saveImage(UploadedFile $image)

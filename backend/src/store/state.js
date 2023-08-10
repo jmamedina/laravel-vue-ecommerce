@@ -43,4 +43,5 @@ export default {
         limit: null,
         total: null
       },
+      countries: [],
 }

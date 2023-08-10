@@ -82,3 +82,8 @@ export function setCustomers(state, [loading, data = null]) {
   }
   state.products.loading = loading;
 }
+
+export function setCountries(state, countries)
+{
+  state.countries = countries.data
+}
