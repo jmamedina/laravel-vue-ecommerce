@@ -2,20 +2,21 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class OrderResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-
     public static $wrap = false;
-    
-    public function toArray(Request $request): array
+
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
     {
         $customer = $this->user->customer;
         $shipping = $customer->shippingAddress;
@@ -62,7 +63,7 @@ class OrderResource extends JsonResource
                 ]
             ],
             'created_at' => (new \DateTime($this->created_at))->format('Y-m-d H:i:s'),
-            'updated_at' => (new \DateTime($this->updated_at))->format('Y-m-d H:i:s')
+            'updated_at' => (new \DateTime($this->updated_at))->format('Y-m-d H:i:s'),
         ];
     }
 }

@@ -1,29 +1,44 @@
 <template>
-    <guest-layout title="Reset password">
-    <div class="mt-3 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+  <GuestLayout title="Set new password">
+    <form class="mt-8 space-y-6" action="#" method="POST">
+      <input type="hidden" name="remember" value="true"/>
+      <div class="rounded-md shadow-sm -space-y-px">
         <div>
-          <div class="mt-2">
-            <input placeholder="New password" id="email" name="email" type="email" autocomplete="email" required="false" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-          </div>
-            <div class="mt-0.5">
-            <input placeholder="Repeat password" id="password" name="password" type="password" autocomplete="current-password" required="false" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-          </div>
+          <label for="new-password" class="sr-only">New Password</label>
+          <input id="new-password" name="password" type="password" required=""
+                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 placeholder="New Password"/>
         </div>
         <div>
-          <div class="flex items-center justify-between">
-            <div class="text-sm">
-              <router-link :to="{name: 'login'}" href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Go back to Login?</router-link>
-            </div>
-          </div>
+          <label for="password-repeat" class="sr-only">Repeat Password</label>
+          <input id="password-repeat" name="password_repeat" type="password" required=""
+                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                 placeholder="Repeat Password"/>
         </div>
-        <div>
-          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="text-sm">
+          <router-link :to="{name: 'login'}" class="font-medium text-indigo-600 hover:text-indigo-500">
+            Go back to Login
+          </router-link>
         </div>
-      </form>
-    </div>
-    </guest-layout>    
+      </div>
+
+      <div>
+        <button type="submit"
+                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <LockClosedIcon class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true"/>
+            </span>
+          Submit
+        </button>
+      </div>
+    </form>
+  </GuestLayout>
 </template>
-<script setup lang="ts">
-    import GuestLayout from '../components/GuestLayout.vue'
+
+<script setup>
+import {LockClosedIcon} from '@heroicons/vue/solid'
+import GuestLayout from "../components/GuestLayout.vue";
 </script>

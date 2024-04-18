@@ -13,11 +13,11 @@ class Customer extends Model
 
     protected $primaryKey = 'user_id';
 
-    protected $fillable = ['first_name', 'last_name', 'phone', 'status'];
+    protected $fillable = ['first_name', 'last_name', 'phone', 'status',];
 
     public function user()
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     private function _getAddresses(): HasOne

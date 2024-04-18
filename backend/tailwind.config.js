@@ -1,13 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/**/*.blade.php",
-    "./src/**/*.js",
-    "./src/**/*.vue",
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
-      keyframes:{
+      keyframes: {
         'fade-in-down': {
           "from": {
             transform: "translateY(-0.75rem)",
@@ -16,15 +15,15 @@ module.exports = {
           "to": {
             transform: "translateY(0rem)",
             opacity: '1'
-          }
-        }
+          },
+        },
       },
       animation: {
-        'fade-in-down' : "fade-in-down 0.2s ease-in-out both",
-      }
+        'fade-in-down': "fade-in-down 0.2s ease-in-out both",
+      },
     },
-  },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+    plugins: [
+      require('@tailwindcss/forms'),
+    ],
+  }
 }

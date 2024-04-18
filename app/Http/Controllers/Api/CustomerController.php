@@ -14,6 +14,7 @@ use App\Models\Customer;
 use App\Models\CustomerAddress;
 use http\Env\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -31,15 +32,13 @@ class CustomerController extends Controller
 
         $query = Customer::query()
             ->with('user')
-            ->orderBy("customers.$sortField", $sortDirection)
-        ;
+            ->orderBy("customers.$sortField", $sortDirection);
         if ($search) {
             $query
                 ->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', "%{$search}%")
                 ->join('users', 'customers.user_id', '=', 'users.id')
                 ->orWhere('users.email', 'like', "%{$search}%")
-                ->orWhere('customers.phone', 'like', "%{$search}%")
-            ;
+                ->orWhere('customers.phone', 'like', "%{$search}%");
         }
 
         $paginator = $query->paginate($perPage);
@@ -52,7 +51,7 @@ class CustomerController extends Controller
      *
      * @param \App\Models\Customer $customer
      * @return \Illuminate\Http\Response
-    */
+     */
     public function show(Customer $customer)
     {
         return new CustomerResource($customer);
@@ -73,22 +72,33 @@ class CustomerController extends Controller
         $shippingData = $customerData['shippingAddress'];
         $billingData = $customerData['billingAddress'];
 
-        $customer->update($customerData);
+        DB::beginTransaction();
+        try {
+            $customer->update($customerData);
 
-        if ($customer->shippingAddress) {
-            $customer->shippingAddress->update($shippingData);
-        } else {
-            $shippingData['customer_id'] = $customer->user_id;
-            $shippingData['type'] = AddressType::Shipping->value;
-            CustomerAddress::create($shippingData);
+            if ($customer->shippingAddress) {
+                $customer->shippingAddress->update($shippingData);
+            } else {
+                $shippingData['customer_id'] = $customer->user_id;
+                $shippingData['type'] = AddressType::Shipping->value;
+                CustomerAddress::create($shippingData);
+            }
+
+            if ($customer->billingAddress) {
+                $customer->billingAddress->update($billingData);
+            } else {
+                $billingData['customer_id'] = $customer->user_id;
+                $billingData['type'] = AddressType::Billing->value;
+                CustomerAddress::create($billingData);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::critical(__METHOD__ . ' method does not work. '. $e->getMessage());
+            throw $e;
         }
-        if ($customer->billingAddress) {
-            $customer->billingAddress->update($billingData);
-        } else {
-            $billingData['customer_id'] = $customer->user_id;
-            $billingData['type'] = AddressType::Billing->value;
-            CustomerAddress::create($billingData);
-        }
+
+        DB::commit();
 
         return new CustomerResource($customer);
     }

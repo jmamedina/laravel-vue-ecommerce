@@ -23,38 +23,38 @@
     <table class="table-auto w-full">
       <thead>
       <tr>
-        <TableHeadCell field="id" :sort-field="sortField" :sort-direction="sortDirection"
+        <TableHeaderCell field="id" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCustomers('id')">
           ID
-        </TableHeadCell>
-        <TableHeadCell field="name" :sort-field="sortField" :sort-direction="sortDirection"
-                         @click="sortCustomers('email')">
+        </TableHeaderCell>
+        <TableHeaderCell field="name" :sort-field="sortField" :sort-direction="sortDirection"
+                         @click="sortCustomers('name')">
           Name
-        </TableHeadCell>
-        <TableHeadCell field="email" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="email" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCustomers('email')">
           Email
-        </TableHeadCell>
-        <TableHeadCell field="phone" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="phone" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCustomers('phone')">
           Phone
-        </TableHeadCell>
-        <TableHeadCell field="status" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="status" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCustomers('status')">
           Status
-        </TableHeadCell>
-        <TableHeadCell field="status" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="created_at" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCustomers('created_at')">
           Register Date
-        </TableHeadCell>
-        <TableHeadCell field="actions">
+        </TableHeaderCell>
+        <TableHeaderCell field="actions">
           Actions
-        </TableHeadCell>
+        </TableHeaderCell>
       </tr>
       </thead>
       <tbody v-if="customers.loading || !customers.data.length">
       <tr>
-        <td colspan="8">
+        <td colspan="7">
           <Spinner v-if="customers.loading"/>
           <p v-else class="text-center py-8 text-gray-700">
             There are no customers
@@ -71,10 +71,10 @@
         <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
           {{ customer.email }}
         </td>
-        <td class="border-b p-2 ">
+        <td class="border-b p-2">
           {{ customer.phone }}
         </td>
-        <td class="border-b p-2 ">
+        <td class="border-b p-2">
           {{ customer.status }}
         </td>
         <td class="border-b p-2">
@@ -105,12 +105,12 @@
               >
                 <div class="px-1 py-1">
                   <MenuItem v-slot="{ active }">
-                    <button
+                    <router-link
+                      :to="{name: 'app.customers.view', params: {id: customer.id}}"
                       :class="[
                         active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                         'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                       ]"
-                      @click="editCustomer(customer)"
                     >
                       <PencilIcon
                         :active="active"
@@ -118,7 +118,7 @@
                         aria-hidden="true"
                       />
                       Edit
-                    </button>
+                    </router-link>
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
                     <button
@@ -126,7 +126,7 @@
                         active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                         'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                       ]"
-                      @click="deleteUser(customer)"
+                      @click="deleteCustomer(customer)"
                     >
                       <TrashIcon
                         :active="active"
@@ -184,10 +184,9 @@ import {computed, onMounted, ref} from "vue";
 import store from "../../store";
 import Spinner from "../../components/core/Spinner.vue";
 import {CUSTOMERS_PER_PAGE} from "../../constants";
-import TableHeadCell from "../../components/core/Table/TableHeadCell.vue";
+import TableHeaderCell from "../../components/core/Table/TableHeaderCell.vue";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
-// import UserModal from "../Customers/UserModal.vue";
 
 const perPage = ref(CUSTOMERS_PER_PAGE);
 const search = ref('');
@@ -196,7 +195,7 @@ const sortField = ref('updated_at');
 const sortDirection = ref('desc')
 
 const customer = ref({})
-const showUserModal = ref(false);
+const showCustomerModal = ref(false);
 
 const emit = defineEmits(['clickEdit'])
 
@@ -239,23 +238,20 @@ function sortCustomers(field) {
 }
 
 function showAddNewModal() {
-  showUserModal.value = true
+  showCustomerModal.value = true
 }
 
-function deleteUser(customer) {
+function deleteCustomer(customer) {
   if (!confirm(`Are you sure you want to delete the customer?`)) {
     return
   }
-  store.dispatch('deleteUser', customer.id)
+  store.dispatch('deleteCustomer', customer)
     .then(res => {
-      // TODO Show notification
+      store.commit('showToast', 'Customer has been successfully deleted');
       store.dispatch('getCustomers')
     })
 }
 
-function editCustomer(p) {
-  emit('clickEdit', p)
-}
 </script>
 
 <style scoped>

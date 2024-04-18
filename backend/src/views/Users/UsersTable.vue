@@ -23,25 +23,25 @@
     <table class="table-auto w-full">
       <thead>
       <tr>
-        <TableHeadCell field="id" :sort-field="sortField" :sort-direction="sortDirection"
+        <TableHeaderCell field="id" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortUsers('id')">
           ID
-        </TableHeadCell>
-        <TableHeadCell field="name" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="name" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortUsers('email')">
           Name
-        </TableHeadCell>
-        <TableHeadCell field="email" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="email" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortUsers('email')">
           Email
-        </TableHeadCell>
-        <TableHeadCell field="created_at" :sort-field="sortField" :sort-direction="sortDirection"
+        </TableHeaderCell>
+        <TableHeaderCell field="created_at" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortUsers('created_at')">
           Create Date
-        </TableHeadCell>
-        <TableHeadCell field="actions">
+        </TableHeaderCell>
+        <TableHeaderCell field="actions">
           Actions
-        </TableHeadCell>
+        </TableHeaderCell>
       </tr>
       </thead>
       <tbody v-if="users.loading || !users.data.length">
@@ -170,7 +170,7 @@ import {computed, onMounted, ref} from "vue";
 import store from "../../store";
 import Spinner from "../../components/core/Spinner.vue";
 import {USERS_PER_PAGE} from "../../constants";
-import TableHeadCell from "../../components/core/Table/TableHeadCell.vue";
+import TableHeaderCell from "../../components/core/Table/TableHeaderCell.vue";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
 import UserModal from "./UserModal.vue";

@@ -8,7 +8,7 @@
       Add new User
     </button>
   </div>
-  <users-table @clickEdit="editUser"></users-table>
+  <UsersTable @clickEdit="editUser"/>
   <UserModal v-model="showUserModal" :user="userModel" @close="onModalClose"/>
 </template>
 

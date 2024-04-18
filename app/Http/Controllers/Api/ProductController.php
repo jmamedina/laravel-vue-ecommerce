@@ -2,41 +2,46 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Api\Product;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductListResource;
 use App\Http\Resources\ProductResource;
+use App\Models\Api\Product;
+use App\Models\ProductCategory;
+use App\Models\ProductImage;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $search = request('search', false);
         $perPage = request('per_page', 10);
-        $sortField = request('sort_field', 'id');
-        $sortDirection = request('sort_direction','asc');
+        $search = request('search', '');
+        $sortField = request('sort_field', 'created_at');
+        $sortDirection = request('sort_direction', 'desc');
 
-        $query = Product::query();
-        $query->orderBy($sortField, $sortDirection);
-        if($search){
-            $query->where('title', 'like', "%{$search}%")
-            ->orWhere('description', 'like', "%{$search}%");
-        }
+        $query = Product::query()
+            ->where('title', 'like', "%{$search}%")
+            ->orderBy($sortField, $sortDirection)
+            ->paginate($perPage);
 
-       return ProductListResource::collection($query->paginate($perPage));
+        return ProductListResource::collection($query);
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function store(ProductRequest $request)
     {
@@ -44,94 +49,123 @@ class ProductController extends Controller
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
 
-        $image = $data['image'] ?? null;
-        if($image){
-            $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getCLientMimeType();
-            $data['image_suze'] = $image->getSize();
-        }
+        /** @var \Illuminate\Http\UploadedFile[] $images */
+        $images = $data['images'] ?? [];
+        $imagePositions = $data['image_positions'] ?? [];
+        $categories = $data['categories'] ?? [];
 
         $product = Product::create($data);
+
+        $this->saveCategories($categories, $product);
+        $this->saveImages($images, $imagePositions, $product);
 
         return new ProductResource($product);
     }
 
     /**
      * Display the specified resource.
+     *
+     * @param \App\Models\Product $product
+     * @return \Illuminate\Http\Response
      */
-    public function show($product)
+    public function show(Product $product)
     {
-        $post = Product::find($product);
-        return $post;
+        return new ProductResource($product);
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Product      $product
+     * @return \Illuminate\Http\Response
      */
-    public function update(ProductRequest $request, $product)
+    public function update(ProductRequest $request, Product $product)
     {
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
 
-        $post = Product::find($request->id);
+        /** @var \Illuminate\Http\UploadedFile[] $images */
+        $images = $data['images'] ?? [];
+        $deletedImages = $data['deleted_images'] ?? [];
+        $imagePositions = $data['image_positions'] ?? [];
+        $categories = $data['categories'] ?? [];
 
-        $image = $data['image'] ?? null;
-        if($image){
-
-             //if there is an old image
-             if ($post->image){
-                $parts =  Explode('/', $post->image);
-                Storage::deleteDirectory('/images/' .  $parts[5]);
-                Storage::deleteDirectory('/public/' . 'images/' .  $parts[5]);
-            }
-
-            $relativePath = $this->saveImage($image);
-            $post->image = URL::to(Storage::url($relativePath));
-            $post->image_mime = $image->getCLientMimeType();
-            $post->image_suze = $image->getSize();
+        $this->saveCategories($categories, $product);
+        $this->saveImages($images, $imagePositions, $product);
+        if (count($deletedImages) > 0) {
+            $this->deleteImages($deletedImages, $product);
         }
 
-        if($post)
-        {
-            $post->title = $request->title;
-            $post->description = $request->description;
-            $post->price = $request->price;
-            return $post->update();
-        }
+        $product->update($data);
 
+        return new ProductResource($product);
     }
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param \App\Models\Product $product
+     * @return \Illuminate\Http\Response
      */
-    public function destroy($product)
+    public function destroy(Product $product)
     {
-        $post = Product::find($product);
-        if($product){
-            $post->delete();
-            return response()->json([
-                'status' => 200,
-                'message' => 'deleted'
-            ]);
-        }else{
-            return response()->json([
-                'status' => 404,
-                'message' => 'yes'
+        $product->delete();
+
+        return response()->noContent();
+    }
+
+    private function saveCategories($categoryIds, Product $product)
+    {
+        ProductCategory::where('product_id', $product->id)->delete();
+        $data = array_map(fn($id) => (['category_id' => $id, 'product_id' => $product->id]), $categoryIds);
+
+        ProductCategory::insert($data);
+    }
+
+    private function saveImages($images, $positions, Product $product)
+    {
+        foreach ($positions as $id => $position) {
+            ProductImage::query()
+                ->where('id', $id)
+                ->update(['position' => $position]);
+        }
+
+        foreach ($images as $id => $image) {
+            $path = 'images/' . Str::random();
+            if (!Storage::exists($path)) {
+                Storage::makeDirectory($path, 0755, true);
+            }
+            $name = Str::random().'.'.$image->getClientOriginalExtension();
+            if (!Storage::putFileAS('public/' . $path, $image, $name)) {
+                throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
+            }
+            $relativePath = $path . '/' . $name;
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => $relativePath,
+                'url' => URL::to(Storage::url($relativePath)),
+                'mime' => $image->getClientMimeType(),
+                'size' => $image->getSize(),
+                'position' => $positions[$id] ?? $id + 1
             ]);
         }
     }
 
-    private function saveImage(UploadedFile $image)
+    private function deleteImages($imageIds, Product $product)
     {
-        $path = 'images/' . Str::random();
-        if(!Storage::exists($path)){
-            Storage::makeDirectory($path, 0755, true);
-        }
-        if (!Storage::putFileAs('public/' . $path, $image, $image->getClientOriginalName())) {
-            throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
-        }
+        $images = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->whereIn('id', $imageIds)
+            ->get();
 
-        return $path . '/' . $image->getClientOriginalName();
+        foreach ($images as $image) {
+            // If there is an old image, delete it
+            if ($image->path) {
+                Storage::deleteDirectory('/public/' . dirname($image->path));
+            }
+            $image->delete();
+        }
     }
 }

@@ -19,15 +19,18 @@ class ProductResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $request->id,
-            'title' => $request->title,
-            'slug' => $request->slug,
-            'description' => $request->description,
-            'image_url' => $request->image ?: null,
-            'price' => $request->price,
-            'published' => (bool)$request->published,
-            'created_at' => (new \DateTime($request->created_at))->format('Y-m-d H:i:s'),
-            'updated_at' => (new \DateTime($request->updated_at))->format('Y-m-d H:i:s'),
+            'id' => $this->id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            'image_url' => $this->image,
+            'images' => $this->images,
+            'price' => $this->price,
+            'quantity' => $this->quantity,
+            'published' => (bool)$this->published,
+            'categories' => $this->categories->map(fn($c) => $c->id),
+            'created_at' => (new \DateTime($this->created_at))->format('Y-m-d H:i:s'),
+            'updated_at' => (new \DateTime($this->updated_at))->format('Y-m-d H:i:s'),
         ];
     }
 }

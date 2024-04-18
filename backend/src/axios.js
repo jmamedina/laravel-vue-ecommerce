@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 import store from "./store";
 import router from "./router/index.js";
 
 const axiosClient = axios.create({
-  baseURL: `http://localhost:10081/api`
+  baseURL: `http://localhost:10082/api`
 })
 
 axiosClient.interceptors.request.use(config => {

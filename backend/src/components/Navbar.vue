@@ -34,6 +34,7 @@
                 ]"
               >
                 <UserIcon
+                  :active="active"
                   class="mr-2 h-5 w-5 text-indigo-400"
                   aria-hidden="true"
                 />
@@ -49,6 +50,7 @@
                 ]"
               >
                 <LogoutIcon
+                  :active="active"
                   class="mr-2 h-5 w-5 text-indigo-400"
                   aria-hidden="true"
                 />
@@ -62,14 +64,16 @@
   </header>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {MenuIcon, LogoutIcon, UserIcon} from '@heroicons/vue/outline'
 import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {ChevronDownIcon} from '@heroicons/vue/solid'
 import store from "../store";
 import router from "../router";
 import {computed} from "vue";
+
 const emit = defineEmits(['toggle-sidebar'])
+
 const currentUser = computed(() => store.state.user.data);
 
 function logout() {
@@ -78,8 +82,9 @@ function logout() {
       router.push({name: 'login'})
     })
 }
+
 </script>
 
 <style scoped>
+
 </style>
-Footer

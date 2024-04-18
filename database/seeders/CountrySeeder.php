@@ -12,8 +12,10 @@ class CountrySeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
         $usaStates = [
             "AL" => 'Alabama',
@@ -23,12 +25,11 @@ class CountrySeeder extends Seeder
             "CA" => 'California',
         ];
         $countries = [
-            ['code' => 'jpn', 'name' => 'Japan', 'states' => null],
+            ['code' => 'geo', 'name' => 'Georgia', 'states' => null],
             ['code' => 'ind', 'name' => 'India', 'states' => null],
             ['code' => 'usa', 'name' => 'United States of America', 'states' => json_encode($usaStates)],
-            ['code' => 'phl', 'name' => 'Philppines', 'states' => null],
+            ['code' => 'ger', 'name' => 'Germany', 'states' => null],
         ];
-
         Country::insert($countries);
     }
 }

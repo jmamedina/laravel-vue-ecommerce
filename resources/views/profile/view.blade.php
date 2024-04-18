@@ -1,15 +1,20 @@
 <x-app-layout>
     <div x-data="{
-        flashMessage: '{{\Illuminate\Support\Facades\Session::get('flash_message')}}',
-        init() {
-            if(this.flashMessage) {
-                setTimeout(() => this.$dispatch('notify', {message: this.flashMessage}), 200)
+            flashMessage: '{{\Illuminate\Support\Facades\Session::get('flash_message')}}',
+            init() {
+                if (this.flashMessage) {
+                    setTimeout(() => this.$dispatch('notify', {message: this.flashMessage}), 200)
+                }
             }
-        }
-    }" class="container mx-auto lg:w-2/3 p-5">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        <div class="bg-white p-3 shadow rounded-lg md:col-span-2">
-        <form x-data="{
+        }" class="container mx-auto lg:w-2/3 p-5">
+        @if (session('error'))
+            <div class="py-2 px-3 bg-red-500 text-white mb-2 rounded">
+                {{ session('error') }}
+            </div>
+        @endif
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <div class="bg-white p-3 shadow rounded-lg md:col-span-2">
+                <form x-data="{
                     countries: {{ json_encode($countries) }},
                     billingAddress: {{ json_encode([
                         'address1' => old('billing.address1', $billingAddress->address1),
@@ -42,8 +47,8 @@
                         return null;
                     }
                 }" action="{{ route('profile.update') }}" method="post">
-            @csrf
-            <h2 class="text-xl font-semibold mb-2">Profile Details</h2>
+                    @csrf
+                    <h2 class="text-xl font-semibold mb-2">Profile Details</h2>
                     <div class="grid grid-cols-2 gap-3 mb-3">
                         <x-input
                             type="text"
@@ -245,10 +250,11 @@
                             </template>
                         </div>
                     </div>
-                    <x-primary-button class="justify-center w-full">Update</x-primary-button>
-            </form>
-        </div>
-        <div class="bg-white p-3 shadow rounded-lg">
+
+                    <x-button class="w-full">Update</x-button>
+                </form>
+            </div>
+            <div class="bg-white p-3 shadow rounded-lg">
                 <form action="{{route('profile_password.update')}}" method="post">
                     @csrf
                     <h2 class="text-xl font-semibold mb-2">Update Password</h2>
@@ -276,9 +282,9 @@
                             class="w-full focus:border-purple-600 focus:ring-purple-600 border-gray-300 rounded"
                         />
                     </div>
-                    <x-primary-button>Update</x-primary-button>
+                    <x-button>Update</x-button>
                 </form>
             </div>
-    </div>
+        </div>
     </div>
 </x-app-layout>

@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <td class="font-bold py-1 px-2">SubTotal</td>
-          <td>{{order.total_price }}</td>
+          <td>{{ $filters.currencyUSD(order.total_price) }}</td>
         </tr>
         </tbody>
       </table>
@@ -99,7 +99,7 @@
             </div>
             <div class="flex justify-between items-center">
               <div class="flex items-center">Qty: {{ item.quantity }}</div>
-              <span class="text-lg font-semibold"> {{item.unit_price }} </span>
+              <span class="text-lg font-semibold"> {{ $filters.currencyUSD(item.unit_price) }} </span>
             </div>
           </div>
         </div>
@@ -124,20 +124,20 @@ const route = useRoute()
 const order = ref(null);
 const orderStatuses = ref([]);
 
-console.log(orderStatuses);
 onMounted(() => {
   store.dispatch('getOrder', route.params.id)
     .then(({data}) => {
       order.value = data
-    }),
-    axiosClient.get(`/orders/statuses`)
+    })
+
+  axiosClient.get(`/orders/statuses`)
     .then(({data}) => orderStatuses.value = data)
 })
 
 function onStatusChange() {
   axiosClient.post(`/orders/change-status/${order.value.id}/${order.value.status}`)
     .then(({data}) => {
-      // store.commit('showToast', `Order status was successfully changed into "${order.value.status}"`)
+      store.commit('showToast', `Order status was successfully changed into "${order.value.status}"`)
     })
 
 }
