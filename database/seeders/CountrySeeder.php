@@ -29,6 +29,7 @@ class CountrySeeder extends Seeder
             ['code' => 'ind', 'name' => 'India', 'states' => null],
             ['code' => 'usa', 'name' => 'United States of America', 'states' => json_encode($usaStates)],
             ['code' => 'ger', 'name' => 'Germany', 'states' => null],
+            ['code' => 'jp', 'name' => 'Japan', 'states' => json_encode($japanStates)],
         ];
         Country::insert($countries);
     }
