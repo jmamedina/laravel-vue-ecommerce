@@ -2,7 +2,9 @@
 E-commerce application built with Laravel, Vue.js, Tailwind.css and Alpine.js. <br>
 
 ## Installation 
-Make sure you have environment setup properly. You will need MySQL, PHP8.1, Node.js and composer.
+Make sure you have environment setup properly. 
+You will need MySQL, PHP8.1, Node.js , composer.
+Docker and laravel sail if you want to deploy it in docker.
 
 ### Install Laravel Website + API
 1. Download the project (or clone using GIT)

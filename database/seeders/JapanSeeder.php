@@ -21,7 +21,7 @@ class JapanSeeder extends Seeder
             "SHI" => 'Shikoku',
             "KAN" => 'Kantou',
             "HDO" => 'Hokkaid',
-            "KAN" => 'Kansai',
+            "KAI" => 'Kansai',
             "CHU" => 'Chugoku',
         ];
 

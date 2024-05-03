@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Controller responsible for handling checkout operations.
+ * チェックアウト操作を処理するコントローラーです。
+ */
+
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
@@ -19,6 +24,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckoutController extends Controller
 {
+    // Process the checkout
+    // チェックアウトを処理する
     public function checkout(Request $request)
     {
         /** @var \App\Models\User $user */
@@ -39,6 +46,8 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
 
+        // Check if each product is in stock
+        // 各商品が在庫にあるかどうかをチェックする
         foreach ($products as $product) {
             $quantity = $cartItems[$product->id]['quantity'];
             if ($product->quantity !== null && $product->quantity < $quantity) {
@@ -51,6 +60,8 @@ class CheckoutController extends Controller
             }
         }
 
+        // Process each product in the cart
+        // カート内の各商品を処理する
         foreach ($products as $product) {
             $quantity = $cartItems[$product->id]['quantity'];
             $totalPrice += $product->price * $quantity;
@@ -76,9 +87,9 @@ class CheckoutController extends Controller
                 $product->save();
             }
         }
-//        dd(route('checkout.failure', [], true));
-//        dd(route('checkout.success', [], true) . '?session_id={CHECKOUT_SESSION_ID}');
 
+        // Create a Stripe session for checkout
+        // チェックアウトのためのStripeセッションを作成する
         $session = \Stripe\Checkout\Session::create([
             'line_items' => $lineItems,
             'mode' => 'payment',
@@ -90,6 +101,7 @@ class CheckoutController extends Controller
         try {
 
             // Create Order
+            // 注文を作成する
             $orderData = [
                 'total_price' => $totalPrice,
                 'status' => OrderStatus::Unpaid,
@@ -99,12 +111,14 @@ class CheckoutController extends Controller
             $order = Order::create($orderData);
 
             // Create Order Items
+            // 注文アイテムを作成する
             foreach ($orderItems as $orderItem) {
                 $orderItem['order_id'] = $order->id;
                 OrderItem::create($orderItem);
             }
 
             // Create Payment
+            // 支払いを作成する
             $paymentData = [
                 'order_id' => $order->id,
                 'amount' => $totalPrice,
@@ -129,6 +143,8 @@ class CheckoutController extends Controller
         return redirect($session->url);
     }
 
+    // Handle successful payment
+    // 支払いが成功した場合の処理
     public function success(Request $request)
     {
         /** @var \App\Models\User $user */
@@ -162,11 +178,15 @@ class CheckoutController extends Controller
         }
     }
 
+    // Handle failed payment
+    // 支払いが失敗した場合の処理
     public function failure(Request $request)
     {
         return view('checkout.failure', ['message' => ""]);
     }
 
+    // Checkout a specific order
+    // 特定の注文をチェックアウトする
     public function checkoutOrder(Order $order, Request $request)
     {
         \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
@@ -200,6 +220,8 @@ class CheckoutController extends Controller
         return redirect($session->url);
     }
 
+    // Webhook for Stripe events
+    // StripeイベントのためのWebhook
     public function webhook()
     {
         \Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
@@ -242,6 +264,8 @@ class CheckoutController extends Controller
         return response('', 200);
     }
 
+    // Update order and payment status after successful payment
+    // 支払いが成功した後、注文と支払いのステータスを更新する
     private function updateOrderAndSession(Payment $payment)
     {
         DB::beginTransaction();
