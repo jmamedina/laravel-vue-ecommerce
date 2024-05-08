@@ -3,7 +3,7 @@ import store from "./store";
 import router from "./router/index.js";
 
 const axiosClient = axios.create({
-  baseURL: `http://localhost:10081/api`
+  baseURL: `http://localhost:10082/api`
 })
 
 axiosClient.interceptors.request.use(config => {
@@ -16,7 +16,7 @@ axiosClient.interceptors.response.use(response => {
 }, error => {
   if (error.response.status === 401) {
     store.commit('setToken', null)
-    router.push({name: 'login'})
+    router.push({ name: 'login' })
   }
   throw error;
 })
