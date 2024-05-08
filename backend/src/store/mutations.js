@@ -1,8 +1,9 @@
-
+// Set user data in the state / 状態にユーザーデータを設定する
 export function setUser(state, user) {
   state.user.data = user;
 }
 
+// Set authentication token in the state / 状態に認証トークンを設定する
 export function setToken(state, token) {
   state.user.token = token;
   if (token) {
@@ -12,6 +13,7 @@ export function setToken(state, token) {
   }
 }
 
+// Set products data in the state / 状態に商品データを設定する
 export function setProducts(state, [loading, data = null]) {
 
   if (data) {
@@ -29,6 +31,7 @@ export function setProducts(state, [loading, data = null]) {
   state.products.loading = loading;
 }
 
+// Set users data in the state / 状態にユーザーデータを設定する
 export function setUsers(state, [loading, data = null]) {
 
   if (data) {
@@ -46,6 +49,7 @@ export function setUsers(state, [loading, data = null]) {
   state.users.loading = loading;
 }
 
+// Set customers data in the state / 状態に顧客データを設定する
 export function setCustomers(state, [loading, data = null]) {
 
   if (data) {
@@ -63,6 +67,7 @@ export function setCustomers(state, [loading, data = null]) {
   state.products.loading = loading;
 }
 
+// Set orders data in the state / 状態に注文データを設定する
 export function setOrders(state, [loading, data = null]) {
 
   if (data) {
@@ -80,20 +85,24 @@ export function setOrders(state, [loading, data = null]) {
   state.orders.loading = loading;
 }
 
+// Show toast message / トーストメッセージを表示する
 export function showToast(state, message) {
   state.toast.show = true;
   state.toast.message = message;
 }
 
+// Hide toast message / トーストメッセージを非表示にする
 export function hideToast(state) {
   state.toast.show = false;
   state.toast.message = '';
 }
 
+// Set countries data in the state / 状態に国のデータを設定する
 export function setCountries(state, countries) {
   state.countries = countries.data;
 }
 
+// Set categories data in the state / 状態にカテゴリーのデータを設定する
 export function setCategories(state, [loading, data = null]) {
 
   if (data) {

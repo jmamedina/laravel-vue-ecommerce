@@ -1,8 +1,11 @@
 <template>
+  <!-- Customer list container -->
   <div class="bg-white p-4 rounded-lg shadow animate-fade-in-down">
     <div class="flex justify-between border-b-2 pb-3">
       <div class="flex items-center">
+        <!-- Per Page label -->
         <span class="whitespace-nowrap mr-3">Per Page</span>
+        <!-- Per Page selection dropdown -->
         <select @change="getCustomers(null)" v-model="perPage"
                 class="appearance-none relative block w-24 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
           <option value="5">5</option>
@@ -11,18 +14,22 @@
           <option value="50">50</option>
           <option value="100">100</option>
         </select>
+        <!-- Total customers count -->
         <span class="ml-3">Found {{customers.total}} customers</span>
       </div>
       <div>
+        <!-- Search input -->
         <input v-model="search" @change="getCustomers(null)"
                class="appearance-none relative block w-48 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                placeholder="Type to Search customers">
       </div>
     </div>
 
+    <!-- Customers table -->
     <table class="table-auto w-full">
       <thead>
       <tr>
+        <!-- Table headers -->
         <TableHeaderCell field="id" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCustomers('id')">
           ID
@@ -52,6 +59,7 @@
         </TableHeaderCell>
       </tr>
       </thead>
+      <!-- Customer data rows -->
       <tbody v-if="customers.loading || !customers.data.length">
       <tr>
         <td colspan="7">
@@ -64,6 +72,7 @@
       </tbody>
       <tbody v-else>
       <tr v-for="(customer, index) of customers.data">
+        <!-- Customer data cells -->
         <td class="border-b p-2 ">{{ customer.id }}</td>
         <td class="border-b p-2 ">
          {{ customer.first_name }} {{ customer.last_name }}
@@ -81,6 +90,7 @@
           {{ customer.created_at }}
         </td>
         <td class="border-b p-2 ">
+          <!-- Dropdown menu -->
           <Menu as="div" class="relative inline-block text-left">
             <div>
               <MenuButton
@@ -92,6 +102,7 @@
               </MenuButton>
             </div>
 
+            <!-- Dropdown menu items -->
             <transition
               enter-active-class="transition duration-100 ease-out"
               enter-from-class="transform scale-95 opacity-0"
@@ -104,6 +115,7 @@
                 class="absolute z-10 right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
                 <div class="px-1 py-1">
+                  <!-- Edit customer -->
                   <MenuItem v-slot="{ active }">
                     <router-link
                       :to="{name: 'app.customers.view', params: {id: customer.id}}"
@@ -120,6 +132,7 @@
                       Edit
                     </router-link>
                   </MenuItem>
+                  <!-- Delete customer -->
                   <MenuItem v-slot="{ active }">
                     <button
                       :class="[
@@ -145,16 +158,18 @@
       </tbody>
     </table>
 
+    <!-- Pagination -->
     <div v-if="!customers.loading" class="flex justify-between items-center mt-5">
       <div v-if="customers.data.length">
         Showing from {{ customers.from }} to {{ customers.to }}
       </div>
+      <!-- Pagination links -->
       <nav
         v-if="customers.total > customers.limit"
         class="relative z-0 inline-flex justify-center rounded-md shadow-sm -space-x-px"
         aria-label="Pagination"
       >
-        <!-- Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
+        <!-- Pagination link items -->
         <a
           v-for="(link, i) of customers.links"
           :key="i"
@@ -188,21 +203,26 @@ import TableHeaderCell from "../../components/core/Table/TableHeaderCell.vue";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
 
+// Reactive variables
 const perPage = ref(CUSTOMERS_PER_PAGE);
 const search = ref('');
 const customers = computed(() => store.state.customers);
 const sortField = ref('updated_at');
 const sortDirection = ref('desc')
 
-const customer = ref({})
-const showCustomerModal = ref(false);
+// Function to delete a customer
+function deleteCustomer(customer) {
+  if (!confirm(`Are you sure you want to delete the customer?`)) {
+    return
+  }
+  store.dispatch('deleteCustomer', customer)
+    .then(res => {
+      store.commit('showToast', 'Customer has been successfully deleted');
+      store.dispatch('getCustomers')
+    })
+}
 
-const emit = defineEmits(['clickEdit'])
-
-onMounted(() => {
-  getCustomers();
-})
-
+// Function to get customers for a specific page
 function getForPage(ev, link) {
   ev.preventDefault();
   if (!link.url || link.active) {
@@ -212,6 +232,7 @@ function getForPage(ev, link) {
   getCustomers(link.url)
 }
 
+// Function to get customers based on search criteria and pagination
 function getCustomers(url = null) {
   store.dispatch("getCustomers", {
     url,
@@ -222,6 +243,7 @@ function getCustomers(url = null) {
   });
 }
 
+// Function to sort customers based on a specific field
 function sortCustomers(field) {
   if (field === sortField.value) {
     if (sortDirection.value === 'desc') {
@@ -237,20 +259,15 @@ function sortCustomers(field) {
   getCustomers()
 }
 
+// Function to show the add new customer modal
 function showAddNewModal() {
   showCustomerModal.value = true
 }
 
-function deleteCustomer(customer) {
-  if (!confirm(`Are you sure you want to delete the customer?`)) {
-    return
-  }
-  store.dispatch('deleteCustomer', customer)
-    .then(res => {
-      store.commit('showToast', 'Customer has been successfully deleted');
-      store.dispatch('getCustomers')
-    })
-}
+// Mounted hook
+onMounted(() => {
+  getCustomers();
+})
 
 </script>
 

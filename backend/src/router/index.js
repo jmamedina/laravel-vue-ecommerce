@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import AppLayout from '../components/AppLayout.vue'
 import Login from "../views/Login.vue";
 import Dashboard from "../views/Dashboard.vue";
@@ -18,6 +18,7 @@ import CustomersReport from "../views/Reports/CustomersReport.vue";
 import ProductForm from "../views/Products/ProductForm.vue";
 import Categories from "../views/Categories/Categories.vue";
 
+// Define routes / ルートを定義する
 const routes = [
   {
     path: '/',
@@ -138,20 +139,23 @@ const routes = [
   }
 ];
 
+// Create router instance / ルーターインスタンスを作成する
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
 
+// Navigation guard / ナビゲーションガード
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !store.state.user.token) {
-    next({name: 'login'})
+    // Redirect to login if authentication is required and user is not logged in / 認証が必要でユーザーがログインしていない場合はログインページにリダイレクトする
+    next({ name: 'login' })
   } else if (to.meta.requiresGuest && store.state.user.token) {
-    next({name: 'app.dashboard'})
+    // Redirect to dashboard if guest access is required and user is logged in / ゲストアクセスが必要でユーザーがログインしている場合はダッシュボードにリダイレクトする
+    next({ name: 'app.dashboard' })
   } else {
     next();
   }
-
 })
 
 export default router;

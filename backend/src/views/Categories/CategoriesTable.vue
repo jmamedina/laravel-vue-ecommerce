@@ -1,71 +1,91 @@
 <template>
+  <!-- Container for the categories table -->
   <div class="bg-white p-4 rounded-lg shadow animate-fade-in-down">
     <div class="flex justify-between border-b-2 pb-3">
       <div class="flex items-center">
+        <!-- Display the number of categories found -->
         <span class="ml-3">Found {{categories.data.length}} categories</span>
       </div>
     </div>
 
+    <!-- Categories table -->
     <table class="table-auto w-full">
       <thead>
       <tr>
+        <!-- Header cell for sorting by ID -->
         <TableHeaderCell field="id" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCategories('id')">
           ID
         </TableHeaderCell>
+        <!-- Header cell for sorting by Name -->
         <TableHeaderCell field="name" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCategories('name')">
           Name
         </TableHeaderCell>
+        <!-- Header cell for sorting by Slug -->
         <TableHeaderCell field="slug" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCategories('slug')">
           Slug
         </TableHeaderCell>
+        <!-- Header cell for sorting by Active status -->
         <TableHeaderCell field="active" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCategories('active')">
           Active
         </TableHeaderCell>
+        <!-- Header cell for sorting by Parent category -->
         <TableHeaderCell field="parent_id" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCategories('parent_id')">
           Parent
         </TableHeaderCell>
+        <!-- Header cell for sorting by Create Date -->
         <TableHeaderCell field="created_at" :sort-field="sortField" :sort-direction="sortDirection"
                          @click="sortCategories('created_at')">
           Create Date
         </TableHeaderCell>
+        <!-- Header cell for Actions -->
         <TableHeaderCell field="actions">
           Actions
         </TableHeaderCell>
       </tr>
       </thead>
+      <!-- Show loading spinner or message if no data -->
       <tbody v-if="categories.loading || !categories.data.length">
       <tr>
         <td colspan="7">
           <Spinner v-if="categories.loading"/>
+          <!-- Display message if no categories found -->
           <p v-else class="text-center py-8 text-gray-700">
             There are no categories
           </p>
         </td>
       </tr>
       </tbody>
+      <!-- Display categories if data available -->
       <tbody v-else>
       <tr v-for="(category, index) of categories.data">
+        <!-- Display ID -->
         <td class="border-b p-2 ">{{ category.id }}</td>
+        <!-- Display Name -->
         <td class="border-b p-2 ">
          {{ category.name }}
         </td>
+        <!-- Display Slug -->
         <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
           {{ category.slug }}
         </td>
+        <!-- Display Active status -->
         <td class="border-b p-2">
           {{ category.active ? 'Yes' : 'No' }}
         </td>
+        <!-- Display Parent category name -->
         <td class="border-b p-2">
           {{ category.parent?.name }}
         </td>
+        <!-- Display Create Date -->
         <td class="border-b p-2">
           {{ category.created_at }}
         </td>
+        <!-- Display Actions menu -->
         <td class="border-b p-2 ">
           <Menu as="div" class="relative inline-block text-left">
             <div>
@@ -78,6 +98,7 @@
               </MenuButton>
             </div>
 
+            <!-- Actions menu items -->
             <transition
               enter-active-class="transition duration-100 ease-out"
               enter-from-class="transform scale-95 opacity-0"
@@ -90,6 +111,7 @@
                 class="absolute z-10 right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
                 <div class="px-1 py-1">
+                  <!-- Edit action -->
                   <MenuItem v-slot="{ active }">
                     <button
                       :class="[
@@ -106,6 +128,7 @@
                       Edit
                     </button>
                   </MenuItem>
+                  <!-- Delete action -->
                   <MenuItem v-slot="{ active }">
                     <button
                       :class="[
@@ -142,19 +165,25 @@ import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {DotsVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/outline'
 import CategoryModal from "./CategoryModal.vue";
 
+// Compute the categories from the store
 const categories = computed(() => store.state.categories);
+// Reference for sorting field and direction
 const sortField = ref('name');
 const sortDirection = ref('asc')
 
+// Variable for category and modal visibility
 const category = ref({})
 const showCategoryModal = ref(false);
 
+// Emit custom event to parent component
 const emit = defineEmits(['clickEdit'])
 
+// Get categories on component mount
 onMounted(() => {
   getCategories();
 })
 
+// Get categories for specific page
 function getForPage(ev, link) {
   ev.preventDefault();
   if (!link.url || link.active) {
@@ -164,6 +193,7 @@ function getForPage(ev, link) {
   getCategories(link.url)
 }
 
+// Function to get categories
 function getCategories(url = null) {
   store.dispatch("getCategories", {
     url,
@@ -172,6 +202,7 @@ function getCategories(url = null) {
   });
 }
 
+// Function to sort categories
 function sortCategories(field) {
   if (field === sortField.value) {
     if (sortDirection.value === 'desc') {
@@ -187,10 +218,12 @@ function sortCategories(field) {
   getCategories()
 }
 
+// Function to show add new category modal
 function showAddNewModal() {
   showCategoryModal.value = true
 }
 
+// Function to delete category
 function deleteCategory(category) {
   if (!confirm(`Are you sure you want to delete the category?`)) {
     return
@@ -202,6 +235,7 @@ function deleteCategory(category) {
     })
 }
 
+// Function to edit category
 function editCategory(p) {
   emit('clickEdit', p)
 }
