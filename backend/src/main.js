@@ -1,9 +1,9 @@
-import {createApp} from 'vue'
+import { createApp } from 'vue'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import store from './store'
 import router from './router'
 import './index.css';
-import currencyUSD from './filters/currency.js'
+import currencyJPY from './filters/currency.js'
 
 import App from './App.vue'
 
@@ -14,8 +14,8 @@ app
   .use(router)
   .use(CKEditor)
   .mount('#app')
-;
+  ;
 
 app.config.globalProperties.$filters = {
-  currencyUSD
+  currencyJPY
 }

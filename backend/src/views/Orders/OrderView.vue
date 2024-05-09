@@ -36,7 +36,7 @@
         <!-- Subtotal -->
         <tr>
           <td class="font-bold py-1 px-2">SubTotal</td>
-          <td>{{ $filters.currencyUSD(order.total_price) }}</td>
+          <td>{{ $filters.currencyJPY(order.total_price) }}</td>
         </tr>
         </tbody>
       </table>
@@ -119,7 +119,7 @@
               <!-- Quantity -->
               <div class="flex items-center">Qty: {{ item.quantity }}</div>
               <!-- Price -->
-              <span class="text-lg font-semibold"> {{ $filters.currencyUSD(item.unit_price) }} </span>
+              <span class="text-lg font-semibold"> {{ $filters.currencyJPY(item.unit_price) }} </span>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers;
 
 use App\Models\CartItem;
@@ -7,6 +8,8 @@ use Illuminate\Support\Arr;
 
 class Cart
 {
+    // Get the count of items in the cart
+    // カート内のアイテムの数を取得する
     public static function getCartItemsCount(): int
     {
         $request = \request();
@@ -18,40 +21,48 @@ class Cart
 
             return array_reduce(
                 $cartItems,
-                fn($carry, $item) => $carry + $item['quantity'],
+                fn ($carry, $item) => $carry + $item['quantity'],
                 0
             );
         }
     }
 
+    // Get the cart items
+    // カート内のアイテムを取得する
     public static function getCartItems()
     {
         $request = \request();
         $user = $request->user();
         if ($user) {
             return CartItem::where('user_id', $user->id)->get()->map(
-                fn($item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]
+                fn ($item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]
             );
         } else {
             return self::getCookieCartItems();
         }
     }
 
+    // Get cart items from cookies
+    // クッキーからカートアイテムを取得する
     public static function getCookieCartItems()
     {
         $request = \request();
         return json_decode($request->cookie('cart_items', '[]'), true);
     }
 
+    // Get count of items from given array of cart items
+    // 指定されたカートアイテムの配列からアイテムの数を取得する
     public static function getCountFromItems($cartItems)
     {
         return array_reduce(
             $cartItems,
-            fn($carry, $item) => $carry + $item['quantity'],
+            fn ($carry, $item) => $carry + $item['quantity'],
             0
         );
     }
 
+    // Move cart items from cookies to database
+    // カートアイテムをクッキーからデータベースに移動する
     public static function moveCartItemsIntoDb()
     {
         $request = \request();
@@ -74,6 +85,8 @@ class Cart
         }
     }
 
+    // Get products and their corresponding cart items
+    // 製品とそれに対応するカートアイテムを取得する
     public static function getProductsAndCartItems(): array|\Illuminate\Database\Eloquent\Collection
     {
         $cartItems = self::getCartItems();

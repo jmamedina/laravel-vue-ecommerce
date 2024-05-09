@@ -61,7 +61,7 @@
           </p>
           <p class="flex justify-between">
             <span>{{ o.first_name }} {{ o.last_name }}</span>
-            <span>{{ $filters.currencyUSD(o.total_price) }}</span>
+            <span>{{ $filters.currencyJPY(o.total_price) }}</span>
           </p>
         </div>
       </template>

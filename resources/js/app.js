@@ -1,15 +1,23 @@
+// Import necessary modules and configurations
+// 必要なモジュールと設定をインポートする
 import './bootstrap';
 
 import Alpine from 'alpinejs';
 import collapse from '@alpinejs/collapse'
-import {get, post} from "./http.js";
+import { get, post } from "./http.js";
 
+// Register Alpine.js plugins
+// Alpine.jsのプラグインを登録する
 Alpine.plugin(collapse)
 
 window.Alpine = Alpine;
 
+// Initialize Alpine.js when it's ready
+// Alpine.jsが準備できたら初期化する
 document.addEventListener("alpine:init", async () => {
 
+  // Define Alpine.js data properties and functions
+  // Alpine.jsのデータプロパティと関数を定義する
   Alpine.data("toast", () => ({
     visible: false,
     delay: 5000,
@@ -53,13 +61,15 @@ document.addEventListener("alpine:init", async () => {
     },
   }));
 
+  // Define Alpine.js data properties and functions for product item
+  // 商品アイテムのAlpine.jsのデータプロパティと関数を定義する
   Alpine.data("productItem", (product) => {
     return {
       product,
       addToCart(quantity = 1) {
-        post(this.product.addToCartUrl, {quantity})
+        post(this.product.addToCartUrl, { quantity })
           .then(result => {
-            this.$dispatch('cart-change', {count: result.count})
+            this.$dispatch('cart-change', { count: result.count })
             this.$dispatch("notify", {
               message: "The item was added into the cart",
             });
@@ -78,14 +88,14 @@ document.addEventListener("alpine:init", async () => {
             this.$dispatch("notify", {
               message: "The item was removed from cart",
             });
-            this.$dispatch('cart-change', {count: result.count})
+            this.$dispatch('cart-change', { count: result.count })
             this.cartItems = this.cartItems.filter(p => p.id !== product.id)
           })
       },
       changeQuantity() {
-        post(this.product.updateQuantityUrl, {quantity: product.quantity})
+        post(this.product.updateQuantityUrl, { quantity: product.quantity })
           .then(result => {
-            this.$dispatch('cart-change', {count: result.count})
+            this.$dispatch('cart-change', { count: result.count })
             this.$dispatch("notify", {
               message: "The item quantity was updated",
             });
@@ -101,5 +111,6 @@ document.addEventListener("alpine:init", async () => {
   });
 });
 
-
+// Start Alpine.js
+// Alpine.jsを起動する
 Alpine.start();

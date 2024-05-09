@@ -18,7 +18,8 @@ import CustomersReport from "../views/Reports/CustomersReport.vue";
 import ProductForm from "../views/Products/ProductForm.vue";
 import Categories from "../views/Categories/Categories.vue";
 
-// Define routes / ルートを定義する
+// Define routes
+// ルートを定義する
 const routes = [
   {
     path: '/',
@@ -139,19 +140,23 @@ const routes = [
   }
 ];
 
-// Create router instance / ルーターインスタンスを作成する
+// Create router instance
+// ルーターインスタンスを作成する
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
 
-// Navigation guard / ナビゲーションガード
+// Navigation guard
+// ナビゲーションガード
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !store.state.user.token) {
-    // Redirect to login if authentication is required and user is not logged in / 認証が必要でユーザーがログインしていない場合はログインページにリダイレクトする
+    // Redirect to login if authentication is required and user is not logged in
+    // 認証が必要でユーザーがログインしていない場合はログインページにリダイレクトする
     next({ name: 'login' })
   } else if (to.meta.requiresGuest && store.state.user.token) {
-    // Redirect to dashboard if guest access is required and user is logged in / ゲストアクセスが必要でユーザーがログインしている場合はダッシュボードにリダイレクトする
+    // Redirect to dashboard if guest access is required and user is logged in
+    // ゲストアクセスが必要でユーザーがログインしている場合はダッシュボードにリダイレクトする
     next({ name: 'app.dashboard' })
   } else {
     next();
