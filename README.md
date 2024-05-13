@@ -77,4 +77,4 @@ Database scheme
 ![alt text](docs/database.png)
 
 Admin Panel Architecture
-![alt text](vuejs_arch.png)
+![alt text](docs/vuejs_arch.png)
