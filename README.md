@@ -75,3 +75,6 @@ Database scheme
 データベーススキーマ
 
 ![alt text](docs/database.png)
+
+Admin Panel Architecture
+![alt text](vuejs_arch.png)

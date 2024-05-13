@@ -7,7 +7,7 @@ import router from "./router/index.js";
 // Create an instance of axios with base URL
 // ベースURLを指定してaxiosのインスタンスを作成する
 const axiosClient = axios.create({
-  baseURL: `http://localhost:10083/api`
+  baseURL: `http://localhost:10082/api`
 })
 
 // Add request interceptor to attach authorization token to each request
